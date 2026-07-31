@@ -32,9 +32,24 @@ app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 
+// 404 handler for unknown routes
+app.use((req, res) => {
+    res.status(404).json({ message: "Route not found.", success: false });
+});
 
+// centralized fallback error handler (in case anything throws outside asyncHandler)
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(err.statusCode || 500).json({
+        message: err.message || "Internal server error.",
+        success: false,
+    });
+});
 
-app.listen(PORT,()=>{
-    connectDB();
-    console.log(`Server running at port ${PORT}`);
-})
+// connect to the DB first, then start listening - avoids accepting
+// requests before the app can actually talk to Mongo
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Server running at port ${PORT}`);
+    });
+});
