@@ -3,6 +3,7 @@ import Navbar from '../shared/Navbar'
 import PageTransition from '../shared/PageTransition'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
+import { PasswordInput } from '../ui/password-input'
 import { Button } from '../ui/button'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -127,9 +128,8 @@ const Login = () => {
                                 <Label htmlFor="password">Password</Label>
                                 <Link to="/forgot-password" className='text-xs text-primary hover:underline'>Forgot password?</Link>
                             </div>
-                            <Input
+                            <PasswordInput
                                 id="password"
-                                type="password"
                                 value={input.password}
                                 name="password"
                                 onChange={changeEventHandler}

@@ -3,6 +3,7 @@ import Navbar from '../shared/Navbar'
 import PageTransition from '../shared/PageTransition'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
+import { PasswordInput } from '../ui/password-input'
 import { Button } from '../ui/button'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -138,7 +139,7 @@ const Signup = () => {
                         </div>
                         <div className='space-y-1.5 mt-4'>
                             <Label htmlFor="password">Password</Label>
-                            <Input id="password" type="password" value={input.password} name="password" onChange={changeEventHandler} placeholder="At least 6 characters" required minLength={6} />
+                            <PasswordInput id="password" value={input.password} name="password" onChange={changeEventHandler} placeholder="At least 6 characters" required minLength={6} />
                         </div>
 
                         <fieldset className='mt-5'>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Navbar from '../shared/Navbar'
 import { Label } from '../ui/label'
-import { Input } from '../ui/input'
+import { PasswordInput } from '../ui/password-input'
 import { Button } from '../ui/button'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
@@ -46,11 +46,11 @@ const ResetPassword = () => {
 
                     <div className='space-y-1.5'>
                         <Label htmlFor="password">New password</Label>
-                        <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" required minLength={6} />
+                        <PasswordInput id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" required minLength={6} />
                     </div>
                     <div className='space-y-1.5 mt-4'>
                         <Label htmlFor="confirmPassword">Confirm password</Label>
-                        <Input id="confirmPassword" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat your password" required minLength={6} />
+                        <PasswordInput id="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat your password" required minLength={6} />
                     </div>
 
                     {
