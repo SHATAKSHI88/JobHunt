@@ -4,14 +4,10 @@ import axios from 'axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-// Fetches jobs from the server using the current search keyword, the
-// active filters (location / jobType / salary range), and pagination.
-// Re-runs whenever any of those change so filtering happens server-side
-// instead of the old client-side Array.filter approach.
 const useGetAllJobs = (page = 1, limit = 12) => {
     const dispatch = useDispatch();
     const { searchedQuery, filters } = useSelector(store => store.job);
-    const { location, jobType, minSalary, maxSalary } = filters;
+    const { location, jobType, minSalary, maxSalary } = filters || {};
 
     useEffect(() => {
         const fetchAllJobs = async () => {

@@ -19,6 +19,11 @@ const persistConfig = {
     key: 'root',
     version: 1,
     storage,
+    // Only auth (the logged-in user) needs to survive a refresh.
+    // job/company/application data is always re-fetched on mount, so
+    // persisting it just risks serving stale shape after an app update
+    // (exactly what caused the "Cannot destructure 'location'" crash).
+    whitelist: ['auth'],
 }
 
 const rootReducer = combineReducers({
