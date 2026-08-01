@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Button } from '../ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar'
-import { LogOut, User2, Briefcase, Bookmark } from 'lucide-react'
+import { LogOut, User2, Briefcase, Bookmark, Menu, X } from 'lucide-react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
@@ -16,10 +16,29 @@ const navLinkClass = ({ isActive }) =>
         isActive ? 'text-foreground font-semibold' : 'text-muted-foreground'
     }`
 
+const mobileNavLinkClass = ({ isActive }) =>
+    `block px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+        isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'
+    }`
+
 const Navbar = () => {
     const { user } = useSelector(store => store.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [mobileOpen, setMobileOpen] = useState(false);
+
+    const navLinks = user && user.role === 'recruiter'
+        ? [
+            { to: "/admin/dashboard", label: "Dashboard" },
+            { to: "/admin/companies", label: "Companies" },
+            { to: "/admin/jobs", label: "Jobs" },
+        ]
+        : [
+            { to: "/", label: "Home", end: true },
+            { to: "/jobs", label: "Jobs" },
+            { to: "/browse", label: "Browse" },
+            { to: "/saved-jobs", label: "Saved" },
+        ];
 
     const logoutHandler = async () => {
         try {
@@ -32,13 +51,15 @@ const Navbar = () => {
         } catch (error) {
             console.log(error);
             toast.error(error.response?.data?.message || "Something went wrong.");
+        } finally {
+            setMobileOpen(false);
         }
     }
 
     return (
         <header className='sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80'>
             <div className='flex items-center justify-between mx-auto max-w-7xl h-16 px-4'>
-                <Link to="/" className='flex items-center gap-2'>
+                <Link to="/" className='flex items-center gap-2' onClick={() => setMobileOpen(false)}>
                     <span className='flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground'>
                         <Briefcase className='h-4 w-4' />
                     </span>
@@ -47,25 +68,15 @@ const Navbar = () => {
                     </h1>
                 </Link>
 
-                <div className='flex items-center gap-8'>
+                {/* Desktop nav */}
+                <div className='hidden md:flex items-center gap-8'>
                     <nav>
                         <ul className='flex font-medium items-center gap-6 text-sm'>
-                            {
-                                user && user.role === 'recruiter' ? (
-                                    <>
-                                        <li><NavLink to="/admin/dashboard" className={navLinkClass}>Dashboard</NavLink></li>
-                                        <li><NavLink to="/admin/companies" className={navLinkClass}>Companies</NavLink></li>
-                                        <li><NavLink to="/admin/jobs" className={navLinkClass}>Jobs</NavLink></li>
-                                    </>
-                                ) : (
-                                    <>
-                                        <li><NavLink to="/" end className={navLinkClass}>Home</NavLink></li>
-                                        <li><NavLink to="/jobs" className={navLinkClass}>Jobs</NavLink></li>
-                                        <li><NavLink to="/browse" className={navLinkClass}>Browse</NavLink></li>
-                                        <li><NavLink to="/saved-jobs" className={navLinkClass}>Saved</NavLink></li>
-                                    </>
-                                )
-                            }
+                            {navLinks.map((link) => (
+                                <li key={link.to}>
+                                    <NavLink to={link.to} end={link.end} className={navLinkClass}>{link.label}</NavLink>
+                                </li>
+                            ))}
                         </ul>
                     </nav>
 
@@ -123,7 +134,80 @@ const Navbar = () => {
                         )
                     }
                 </div>
+
+                {/* Mobile controls: theme toggle always visible, rest behind hamburger */}
+                <div className='flex items-center gap-2 md:hidden'>
+                    <ThemeToggle />
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        className="rounded-full"
+                        aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                        onClick={() => setMobileOpen((v) => !v)}
+                    >
+                        {mobileOpen ? <X className='h-4 w-4' /> : <Menu className='h-4 w-4' />}
+                    </Button>
+                </div>
             </div>
+
+            {/* Mobile menu panel */}
+            {
+                mobileOpen && (
+                    <div className='md:hidden border-t border-border bg-background px-4 py-4'>
+                        <nav>
+                            <ul className='flex flex-col gap-1'>
+                                {navLinks.map((link) => (
+                                    <li key={link.to}>
+                                        <NavLink to={link.to} end={link.end} className={mobileNavLinkClass} onClick={() => setMobileOpen(false)}>
+                                            {link.label}
+                                        </NavLink>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+
+                        <div className='border-t border-border mt-4 pt-4'>
+                            {
+                                !user ? (
+                                    <div className='flex items-center gap-2'>
+                                        <Link to="/login" className="flex-1" onClick={() => setMobileOpen(false)}><Button variant="outline" className="w-full">Login</Button></Link>
+                                        <Link to="/signup" className="flex-1" onClick={() => setMobileOpen(false)}><Button className="w-full">Signup</Button></Link>
+                                    </div>
+                                ) : (
+                                    <div className='flex flex-col gap-1'>
+                                        <div className='flex items-center gap-3 px-1 pb-3'>
+                                            <Avatar className="h-9 w-9">
+                                                <AvatarImage src={user?.profile?.profilePhoto} alt={user?.fullname} />
+                                                <AvatarFallback>{user?.fullname?.[0]?.toUpperCase()}</AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                                <p className='font-semibold text-sm'>{user?.fullname}</p>
+                                                <p className='text-xs text-muted-foreground'>{user?.email}</p>
+                                            </div>
+                                        </div>
+                                        {
+                                            user.role === 'student' && (
+                                                <>
+                                                    <NavLink to="/profile" className={mobileNavLinkClass} onClick={() => setMobileOpen(false)}>
+                                                        <span className='flex items-center gap-2'><User2 className='h-4 w-4' /> View Profile</span>
+                                                    </NavLink>
+                                                    <NavLink to="/saved-jobs" className={mobileNavLinkClass} onClick={() => setMobileOpen(false)}>
+                                                        <span className='flex items-center gap-2'><Bookmark className='h-4 w-4' /> Saved Jobs</span>
+                                                    </NavLink>
+                                                </>
+                                            )
+                                        }
+                                        <button onClick={logoutHandler} className='flex items-center gap-2 px-3 py-2.5 rounded-md text-sm text-left text-destructive hover:bg-destructive/10 transition-colors'>
+                                            <LogOut className='h-4 w-4' />
+                                            Logout
+                                        </button>
+                                    </div>
+                                )
+                            }
+                        </div>
+                    </div>
+                )
+            }
         </header>
     )
 }

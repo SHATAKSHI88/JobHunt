@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from './shared/Navbar'
+import PageTransition from './shared/PageTransition'
 import Job from './Job'
 import { Skeleton } from './ui/skeleton'
 import axios from 'axios'
@@ -29,6 +30,7 @@ const SavedJobs = () => {
     return (
         <div>
             <Navbar />
+            <PageTransition>
             <div className='max-w-7xl mx-auto px-4 my-10'>
                 <div className='mb-8'>
                     <h1 className='font-heading font-extrabold text-2xl'>Saved jobs</h1>
@@ -60,6 +62,7 @@ const SavedJobs = () => {
                     )
                 }
             </div>
+        </PageTransition>
         </div>
     )
 }

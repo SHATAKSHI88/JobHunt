@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from './shared/Navbar'
+import PageTransition from './shared/PageTransition'
 import FilterCard from './FilterCard'
 import Job from './Job';
 import Pagination from './shared/Pagination';
@@ -28,6 +29,7 @@ const Jobs = () => {
     return (
         <div>
             <Navbar />
+            <PageTransition>
             <div className='max-w-7xl mx-auto px-4 mt-6'>
                 <div className='flex gap-6'>
                     <aside className='w-72 shrink-0 hidden md:block'>
@@ -84,6 +86,7 @@ const Jobs = () => {
                     </div>
                 </div>
             </div>
+        </PageTransition>
         </div>
     )
 }

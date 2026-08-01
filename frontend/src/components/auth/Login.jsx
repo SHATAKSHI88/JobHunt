@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from '../shared/Navbar'
+import PageTransition from '../shared/PageTransition'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
@@ -60,6 +61,7 @@ const Login = () => {
     return (
         <div>
             <Navbar />
+            <PageTransition>
             <div className='min-h-[calc(100vh-4rem)] grid lg:grid-cols-2'>
                 {/* Left panel */}
                 <div className='hidden lg:flex relative flex-col justify-between overflow-hidden bg-[#123a8a] p-12'>
@@ -171,6 +173,7 @@ const Login = () => {
                     </form>
                 </div>
             </div>
+        </PageTransition>
         </div>
     )
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from '../shared/Navbar'
+import PageTransition from '../shared/PageTransition'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import CompaniesTable from './CompaniesTable'
@@ -21,6 +22,7 @@ const Companies = () => {
     return (
         <div>
             <Navbar />
+            <PageTransition>
             <div className='max-w-6xl mx-auto px-4 my-8'>
                 <div className='flex items-center justify-between mb-6'>
                     <div>
@@ -43,6 +45,7 @@ const Companies = () => {
                     <CompaniesTable />
                 </div>
             </div>
+        </PageTransition>
         </div>
     )
 }

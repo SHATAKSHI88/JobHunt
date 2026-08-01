@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from './shared/Navbar'
+import PageTransition from './shared/PageTransition'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
@@ -69,6 +70,7 @@ const JobDescription = () => {
     return (
         <div>
             <Navbar />
+            <PageTransition>
             <div className='max-w-5xl mx-auto px-4 my-10'>
                 <div className='bg-card border border-border rounded-lg p-6 sm:p-8'>
                     <div className='flex flex-col sm:flex-row sm:items-start justify-between gap-4'>
@@ -123,6 +125,7 @@ const JobDescription = () => {
                     </div>
                 </div>
             </div>
+        </PageTransition>
         </div>
     )
 }

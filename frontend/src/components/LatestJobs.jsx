@@ -1,12 +1,43 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import LatestJobCards from './LatestJobCards';
 import { Skeleton } from './ui/skeleton';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button } from './ui/button';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const LatestJobs = () => {
     const { allJobs, isLoading } = useSelector(store => store.job);
+    const gridRef = useRef(null);
+
+    useEffect(() => {
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (prefersReducedMotion || isLoading || !gridRef.current) return;
+
+        const ctx = gsap.context(() => {
+            gsap.fromTo(
+                gridRef.current.children,
+                { opacity: 0, y: 24 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.5,
+                    stagger: 0.08,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: gridRef.current,
+                        start: "top 85%",
+                        once: true,
+                    },
+                }
+            );
+        });
+
+        return () => ctx.revert();
+    }, [isLoading, allJobs]);
 
     return (
         <section className='max-w-7xl mx-auto px-4 my-16'>
@@ -42,7 +73,7 @@ const LatestJobs = () => {
                         No jobs available right now — check back soon.
                     </div>
                 ) : (
-                    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5'>
+                    <div ref={gridRef} className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5'>
                         {allJobs?.slice(0, 6).map((job) => <LatestJobCards key={job._id} job={job} />)}
                     </div>
                 )

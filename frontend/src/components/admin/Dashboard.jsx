@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from '../shared/Navbar'
+import PageTransition from '../shared/PageTransition'
 import axios from 'axios'
 import { ANALYTICS_API_END_POINT } from '@/utils/constant'
 import { Briefcase, Building2, Users, TrendingUp } from 'lucide-react'
@@ -56,6 +57,7 @@ const Dashboard = () => {
     return (
         <div>
             <Navbar />
+            <PageTransition>
             <div className='max-w-6xl mx-auto px-4 my-8'>
                 <div className='mb-6'>
                     <h1 className='font-heading font-extrabold text-2xl'>Dashboard</h1>
@@ -147,6 +149,7 @@ const Dashboard = () => {
                     )
                 }
             </div>
+        </PageTransition>
         </div>
     )
 }

@@ -18,6 +18,7 @@ import Dashboard from './components/admin/Dashboard'
 import PostJob from './components/admin/PostJob'
 import Applicants from './components/admin/Applicants'
 import ProtectedRoute from './components/admin/ProtectedRoute'
+import RequireAuth from './components/shared/RequireAuth'
 
 
 const appRouter = createBrowserRouter([
@@ -55,11 +56,11 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/profile",
-    element: <Profile />
+    element: <RequireAuth><Profile /></RequireAuth>
   },
   {
     path: "/saved-jobs",
-    element: <SavedJobs />
+    element: <RequireAuth><SavedJobs /></RequireAuth>
   },
   // admin ke liye yha se start hoga
   {

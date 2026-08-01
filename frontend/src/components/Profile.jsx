@@ -8,6 +8,7 @@ import AppliedJobTable from './AppliedJobTable'
 import UpdateProfileDialog from './UpdateProfileDialog'
 import { useSelector } from 'react-redux'
 import useGetAppliedJobs from '@/hooks/useGetAppliedJobs'
+import PageTransition from './shared/PageTransition'
 
 const Profile = () => {
     useGetAppliedJobs();
@@ -17,6 +18,7 @@ const Profile = () => {
     return (
         <div>
             <Navbar />
+            <PageTransition>
             <div className='max-w-4xl mx-auto px-4'>
                 <div className='bg-card border border-border rounded-lg my-6 p-6 sm:p-8'>
                     <div className='flex flex-col sm:flex-row justify-between gap-4'>
@@ -74,6 +76,7 @@ const Profile = () => {
                     <AppliedJobTable />
                 </div>
             </div>
+            </PageTransition>
             <UpdateProfileDialog open={open} setOpen={setOpen} />
         </div>
     )
