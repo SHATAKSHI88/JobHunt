@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react'
 import Navbar from './shared/Navbar'
 import HeroSection from './HeroSection'
+import TrustedBy from './TrustedBy'
 import CategoryCarousel from './CategoryCarousel'
 import LatestJobs from './LatestJobs'
+import HowItWorks from './HowItWorks'
+import RecruiterCta from './RecruiterCta'
 import Footer from './shared/Footer'
 import PageTransition from './shared/PageTransition'
 import useGetAllJobs from '@/hooks/useGetAllJobs'
@@ -23,8 +26,11 @@ const Home = () => {
       <Navbar />
       <PageTransition>
         <HeroSection />
+        <TrustedBy />
         <CategoryCarousel />
         <LatestJobs />
+        <HowItWorks />
+        <RecruiterCta />
         <Footer />
       </PageTransition>
     </div>
