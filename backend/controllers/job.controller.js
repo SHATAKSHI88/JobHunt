@@ -1,4 +1,5 @@
 import { Job } from "../models/job.model.js";
+import { Company } from "../models/company.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 
@@ -66,10 +67,20 @@ export const getAllJobs = asyncHandler(async (req, res) => {
     const page = Math.max(Number(req.query.page) || 1, 1);
     const limit = Math.max(Number(req.query.limit) || 9, 1);
 
+    // company is a reference, not a plain string field, so it can't be
+    // matched with a $regex directly — look up matching company ids first.
+    let matchingCompanyIds = [];
+    if (keyword) {
+        const matchingCompanies = await Company.find({ name: { $regex: keyword, $options: "i" } }).select("_id");
+        matchingCompanyIds = matchingCompanies.map((c) => c._id);
+    }
+
     const query = {
         $or: [
             { title: { $regex: keyword, $options: "i" } },
             { description: { $regex: keyword, $options: "i" } },
+            { location: { $regex: keyword, $options: "i" } },
+            { company: { $in: matchingCompanyIds } },
         ],
     };
 
