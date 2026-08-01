@@ -7,6 +7,7 @@ import ResetPassword from './components/auth/ResetPassword'
 import Home from './components/Home'
 import Jobs from './components/Jobs'
 import Browse from './components/Browse'
+import SavedJobs from './components/SavedJobs'
 import Profile from './components/Profile'
 import JobDescription from './components/JobDescription'
 import Companies from './components/admin/Companies'
@@ -55,6 +56,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/profile",
     element: <Profile />
+  },
+  {
+    path: "/saved-jobs",
+    element: <SavedJobs />
   },
   // admin ke liye yha se start hoga
   {

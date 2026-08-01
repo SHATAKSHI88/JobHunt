@@ -3,13 +3,14 @@ import Navbar from './shared/Navbar'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
-import { MapPin, Briefcase, Wallet, GraduationCap, Users, CalendarDays, CheckCircle2 } from 'lucide-react'
+import { MapPin, Briefcase, Wallet, GraduationCap, Users, CalendarDays, CheckCircle2, Bookmark, BookmarkCheck } from 'lucide-react'
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { APPLICATION_API_END_POINT, JOB_API_END_POINT } from '@/utils/constant';
 import { setSingleJob } from '@/redux/jobSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
+import useSaveJob from '@/hooks/useSaveJob';
 
 const infoRow = (Icon, label, value) => (
     <div className='flex items-start gap-3'>
@@ -32,6 +33,7 @@ const JobDescription = () => {
     const params = useParams();
     const jobId = params.id;
     const dispatch = useDispatch();
+    const { isSaved, toggleSave, pending } = useSaveJob(jobId);
 
     const applyJobHandler = async () => {
         try {
@@ -85,13 +87,25 @@ const JobDescription = () => {
                                 </div>
                             </div>
                         </div>
-                        <Button
-                            onClick={isApplied ? undefined : applyJobHandler}
-                            disabled={isApplied}
-                            size="lg"
-                            className={`rounded-lg shrink-0 ${isApplied ? 'bg-muted text-muted-foreground cursor-not-allowed hover:bg-muted' : 'bg-accent text-accent-foreground hover:bg-accent/90'}`}>
-                            {isApplied ? (<><CheckCircle2 className='h-4 w-4 mr-2' /> Already applied</>) : 'Apply now'}
-                        </Button>
+                        <div className='flex items-center gap-2 shrink-0'>
+                            <Button
+                                onClick={toggleSave}
+                                disabled={pending}
+                                variant="outline"
+                                size="icon"
+                                className={isSaved ? 'text-primary border-primary/40' : ''}
+                                aria-label={isSaved ? "Remove from saved jobs" : "Save job"}
+                            >
+                                {isSaved ? <BookmarkCheck className='h-4 w-4' /> : <Bookmark className='h-4 w-4' />}
+                            </Button>
+                            <Button
+                                onClick={isApplied ? undefined : applyJobHandler}
+                                disabled={isApplied}
+                                size="lg"
+                                className={`rounded-lg ${isApplied ? 'bg-muted text-muted-foreground cursor-not-allowed hover:bg-muted' : 'bg-accent text-accent-foreground hover:bg-accent/90'}`}>
+                                {isApplied ? (<><CheckCircle2 className='h-4 w-4 mr-2' /> Already applied</>) : 'Apply now'}
+                            </Button>
+                        </div>
                     </div>
 
                     <div className='border-t border-border mt-6 pt-6'>

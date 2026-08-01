@@ -6,6 +6,8 @@ import {
     updateProfile,
     forgotPassword,
     resetPassword,
+    toggleSaveJob,
+    getSavedJobs,
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload } from "../middlewares/multer.js";
@@ -18,5 +20,7 @@ router.route("/logout").get(logout);
 router.route("/profile/update").post(isAuthenticated, singleUpload, updateProfile);
 router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password/:token").post(resetPassword);
+router.route("/save-job/:id").post(isAuthenticated, toggleSaveJob);
+router.route("/saved-jobs").get(isAuthenticated, getSavedJobs);
 
 export default router;

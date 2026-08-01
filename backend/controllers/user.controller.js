@@ -1,4 +1,5 @@
 import { User } from "../models/user.model.js";
+import { Job } from "../models/job.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
@@ -92,6 +93,7 @@ export const login = asyncHandler(async (req, res) => {
         phoneNumber: user.phoneNumber,
         role: user.role,
         profile: user.profile,
+        savedJobs: user.savedJobs,
     };
 
     return res
@@ -148,6 +150,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
         phoneNumber: user.phoneNumber,
         role: user.role,
         profile: user.profile,
+        savedJobs: user.savedJobs,
     };
 
     return res.status(200).json({
@@ -233,6 +236,55 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
     return res.status(200).json({
         message: "Password has been reset successfully. You can now log in.",
+        success: true,
+    });
+});
+
+// --- Saved / bookmarked jobs ---
+
+export const toggleSaveJob = asyncHandler(async (req, res) => {
+    const userId = req.id;
+    const jobId = req.params.id;
+
+    const job = await Job.findById(jobId);
+    if (!job) {
+        throw new ApiError(404, "Job not found.");
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new ApiError(404, "User not found.");
+    }
+
+    const alreadySaved = user.savedJobs.some((id) => id.toString() === jobId);
+
+    if (alreadySaved) {
+        user.savedJobs = user.savedJobs.filter((id) => id.toString() !== jobId);
+    } else {
+        user.savedJobs.push(jobId);
+    }
+    await user.save();
+
+    return res.status(200).json({
+        message: alreadySaved ? "Removed from saved jobs." : "Job saved.",
+        saved: !alreadySaved,
+        savedJobs: user.savedJobs,
+        success: true,
+    });
+});
+
+export const getSavedJobs = asyncHandler(async (req, res) => {
+    const userId = req.id;
+    const user = await User.findById(userId).populate({
+        path: "savedJobs",
+        populate: { path: "company" },
+    });
+    if (!user) {
+        throw new ApiError(404, "User not found.");
+    }
+
+    return res.status(200).json({
+        savedJobs: user.savedJobs,
         success: true,
     });
 });

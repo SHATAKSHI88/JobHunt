@@ -2,7 +2,7 @@ import React from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Button } from '../ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar'
-import { LogOut, User2, Briefcase } from 'lucide-react'
+import { LogOut, User2, Briefcase, Bookmark } from 'lucide-react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
@@ -62,6 +62,7 @@ const Navbar = () => {
                                         <li><NavLink to="/" end className={navLinkClass}>Home</NavLink></li>
                                         <li><NavLink to="/jobs" className={navLinkClass}>Jobs</NavLink></li>
                                         <li><NavLink to="/browse" className={navLinkClass}>Browse</NavLink></li>
+                                        <li><NavLink to="/saved-jobs" className={navLinkClass}>Saved</NavLink></li>
                                     </>
                                 )
                             }
@@ -99,10 +100,16 @@ const Navbar = () => {
                                         <div className='flex flex-col mt-4 gap-1'>
                                             {
                                                 user && user.role === 'student' && (
-                                                    <Link to="/profile" className='flex items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted transition-colors'>
-                                                        <User2 className='h-4 w-4' />
-                                                        View Profile
-                                                    </Link>
+                                                    <>
+                                                        <Link to="/profile" className='flex items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted transition-colors'>
+                                                            <User2 className='h-4 w-4' />
+                                                            View Profile
+                                                        </Link>
+                                                        <Link to="/saved-jobs" className='flex items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted transition-colors'>
+                                                            <Bookmark className='h-4 w-4' />
+                                                            Saved Jobs
+                                                        </Link>
+                                                    </>
                                                 )
                                             }
                                             <button onClick={logoutHandler} className='flex items-center gap-2 rounded-md px-2 py-2 text-sm text-left hover:bg-muted transition-colors'>

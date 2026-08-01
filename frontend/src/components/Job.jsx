@@ -1,20 +1,29 @@
 import React from 'react'
 import { Button } from './ui/button'
-import { Bookmark, MapPin } from 'lucide-react'
+import { Bookmark, BookmarkCheck, MapPin } from 'lucide-react'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
 import { Badge } from './ui/badge'
 import { useNavigate } from 'react-router-dom'
 import { jobTypeAccent, daysAgo } from '@/lib/jobType'
+import useSaveJob from '@/hooks/useSaveJob'
 
 const Job = ({ job }) => {
     const navigate = useNavigate();
+    const { isSaved, toggleSave, pending } = useSaveJob(job?._id);
 
     return (
         <div className={`group flex flex-col p-5 rounded-lg border border-l-4 ${jobTypeAccent(job?.jobType)} border-border bg-card shadow-sm hover:shadow-md transition-shadow`}>
             <div className='flex items-center justify-between'>
                 <p className='text-xs text-muted-foreground'>{daysAgo(job?.createdAt)}</p>
-                <Button variant="ghost" className="rounded-full h-8 w-8 text-muted-foreground hover:text-primary" size="icon" aria-label="Save job">
-                    <Bookmark className='h-4 w-4' />
+                <Button
+                    variant="ghost"
+                    className={`rounded-full h-8 w-8 ${isSaved ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
+                    size="icon"
+                    aria-label={isSaved ? "Remove from saved jobs" : "Save job"}
+                    onClick={toggleSave}
+                    disabled={pending}
+                >
+                    {isSaved ? <BookmarkCheck className='h-4 w-4' /> : <Bookmark className='h-4 w-4' />}
                 </Button>
             </div>
 
@@ -44,7 +53,13 @@ const Job = ({ job }) => {
 
             <div className='flex items-center gap-3 mt-4 pt-4 border-t border-border'>
                 <Button onClick={() => navigate(`/description/${job?._id}`)} variant="outline" className="flex-1">Details</Button>
-                <Button className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90">Save for later</Button>
+                <Button
+                    onClick={toggleSave}
+                    disabled={pending}
+                    className={`flex-1 ${isSaved ? 'bg-muted text-foreground hover:bg-muted/80' : 'bg-accent text-accent-foreground hover:bg-accent/90'}`}
+                >
+                    {isSaved ? 'Saved' : 'Save for later'}
+                </Button>
             </div>
         </div>
     )
