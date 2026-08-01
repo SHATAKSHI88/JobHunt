@@ -11,7 +11,7 @@ import { USER_API_END_POINT } from '@/utils/constant'
 import { toast } from 'sonner'
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoading } from '@/redux/authSlice'
-import { Loader2, Briefcase, UploadCloud, CheckCircle2 } from 'lucide-react'
+import { Loader2, Briefcase, UploadCloud, CheckCircle2, X } from 'lucide-react'
 
 const highlights = [
     "Free to post jobs and browse candidates",
@@ -120,7 +120,16 @@ const Signup = () => {
                 </div>
 
                 {/* Right panel */}
-                <div className='flex items-center justify-center p-6'>
+                <div className='relative flex items-center justify-center p-6'>
+                    <Button
+                        onClick={() => navigate("/")}
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-4 right-4 rounded-full text-muted-foreground hover:text-foreground"
+                        aria-label="Close and return home"
+                    >
+                        <X className='h-4 w-4' />
+                    </Button>
                     <form onSubmit={submitHandler} className='w-full max-w-sm'>
                         <h1 className='font-heading font-extrabold text-2xl mb-1'>Sign up</h1>
                         <p className='text-sm text-muted-foreground mb-6'>Let's get your account set up.</p>
