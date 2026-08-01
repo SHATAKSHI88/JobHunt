@@ -9,7 +9,13 @@ import { USER_API_END_POINT } from '@/utils/constant'
 import { toast } from 'sonner'
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoading, setUser } from '@/redux/authSlice'
-import { Loader2, Briefcase } from 'lucide-react'
+import { Loader2, Briefcase, CheckCircle2 } from 'lucide-react'
+
+const highlights = [
+    "Track every application in one place",
+    "Get notified the moment your status changes",
+    "Save roles and come back to them anytime",
+]
 
 const Login = () => {
     const [input, setInput] = useState({
@@ -55,20 +61,47 @@ const Login = () => {
         <div>
             <Navbar />
             <div className='min-h-[calc(100vh-4rem)] grid lg:grid-cols-2'>
-                <div className='hidden lg:flex flex-col justify-between bg-primary text-primary-foreground p-12'>
-                    <Link to="/" className='flex items-center gap-2'>
-                        <span className='flex h-8 w-8 items-center justify-center rounded-md bg-primary-foreground/15'>
-                            <Briefcase className='h-4 w-4' />
+                {/* Left panel */}
+                <div className='hidden lg:flex relative flex-col justify-between overflow-hidden bg-[#123a8a] p-12'>
+                    {/* decorative background */}
+                    <div
+                        className='pointer-events-none absolute inset-0 opacity-[0.15]'
+                        style={{
+                            backgroundImage: "radial-gradient(circle, #ffffff 1px, transparent 1px)",
+                            backgroundSize: "24px 24px",
+                        }}
+                    />
+                    <div className='pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-white/10 blur-3xl' />
+                    <div className='pointer-events-none absolute -bottom-32 -left-16 h-72 w-72 rounded-full bg-white/10 blur-3xl' />
+
+                    <Link to="/" className='relative flex items-center gap-2 z-10'>
+                        <span className='flex h-9 w-9 items-center justify-center rounded-md bg-white/15 backdrop-blur'>
+                            <Briefcase className='h-4 w-4 text-white' />
                         </span>
-                        <span className='font-heading text-xl font-extrabold'>JobHunt</span>
+                        <span className='font-heading text-xl font-extrabold text-white'>JobHunt</span>
                     </Link>
-                    <div>
-                        <h2 className='font-heading text-3xl font-extrabold leading-tight'>Welcome back.<br />Your next opportunity is waiting.</h2>
-                        <p className='mt-4 text-primary-foreground/80 max-w-sm'>Sign in to keep track of your applications, or manage your open roles as a recruiter.</p>
+
+                    <div className='relative z-10'>
+                        <h2 className='font-heading text-4xl font-extrabold leading-tight text-white'>
+                            Welcome back.<br />Your next opportunity is waiting.
+                        </h2>
+                        <p className='mt-4 text-white/70 max-w-sm'>
+                            Sign in to keep track of your applications, or manage your open roles as a recruiter.
+                        </p>
+                        <ul className='mt-8 space-y-3'>
+                            {highlights.map((item) => (
+                                <li key={item} className='flex items-center gap-2.5 text-white/90 text-sm'>
+                                    <CheckCircle2 className='h-4 w-4 text-emerald-300 shrink-0' />
+                                    {item}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-                    <p className='text-sm text-primary-foreground/60'>© {new Date().getFullYear()} JobHunt</p>
+
+                    <p className='relative z-10 text-sm text-white/50'>© {new Date().getFullYear()} JobHunt</p>
                 </div>
 
+                {/* Right panel */}
                 <div className='flex items-center justify-center p-6'>
                     <form onSubmit={submitHandler} className='w-full max-w-sm'>
                         <h1 className='font-heading font-extrabold text-2xl mb-1'>Log in</h1>
