@@ -14,7 +14,7 @@ const Home = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (user?.role === 'recruiter') {
-      navigate("/admin/companies");
+      navigate("/admin/dashboard");
     }
   }, []);
   return (

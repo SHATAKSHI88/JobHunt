@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from './shared/Navbar'
 import Job from './Job';
+import Pagination from './shared/Pagination';
 import { Skeleton } from './ui/skeleton';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSearchedQuery } from '@/redux/jobSlice';
@@ -8,14 +9,27 @@ import useGetAllJobs from '@/hooks/useGetAllJobs';
 import { SearchX } from 'lucide-react';
 
 const Browse = () => {
-    useGetAllJobs();
-    const { allJobs, searchedQuery, isLoading } = useSelector(store => store.job);
+    const [page, setPage] = useState(1);
+    const { allJobs, searchedQuery, isLoading, pagination } = useSelector(store => store.job);
     const dispatch = useDispatch();
+
+    useGetAllJobs(page);
+
+    useEffect(() => {
+        setPage(1);
+    }, [searchedQuery]);
+
     useEffect(() => {
         return () => {
             dispatch(setSearchedQuery(""));
         }
     }, [])
+
+    const handlePageChange = (newPage) => {
+        setPage(newPage);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     return (
         <div>
             <Navbar />
@@ -24,7 +38,7 @@ const Browse = () => {
                     <h1 className='font-heading font-extrabold text-2xl'>
                         {searchedQuery ? `Results for "${searchedQuery}"` : "Search results"}
                     </h1>
-                    <p className='text-muted-foreground text-sm mt-1'>{isLoading ? "Searching…" : `${allJobs.length} job${allJobs.length === 1 ? "" : "s"} found`}</p>
+                    <p className='text-muted-foreground text-sm mt-1'>{isLoading ? "Searching…" : `${pagination.totalJobs} job${pagination.totalJobs === 1 ? "" : "s"} found`}</p>
                 </div>
 
                 {
@@ -46,9 +60,16 @@ const Browse = () => {
                             <p className='text-sm text-muted-foreground mt-1'>Try a broader keyword.</p>
                         </div>
                     ) : (
-                        <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5'>
-                            {allJobs.map((job) => <Job key={job._id} job={job} />)}
-                        </div>
+                        <>
+                            <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5'>
+                                {allJobs.map((job) => <Job key={job._id} job={job} />)}
+                            </div>
+                            <Pagination
+                                currentPage={pagination.currentPage}
+                                totalPages={pagination.totalPages}
+                                onPageChange={handlePageChange}
+                            />
+                        </>
                     )
                 }
             </div>

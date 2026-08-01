@@ -10,6 +10,24 @@ const jobSlice = createSlice({
         allAppliedJobs:[],
         searchedQuery:"",
         isLoading:false,
+        // real, DB-derived filter options (replaces the old hardcoded lists)
+        filterOptions: {
+            locations: [],
+            jobTypes: [],
+            salaryRange: { min: 0, max: 0 },
+        },
+        // the filters currently applied by the user
+        filters: {
+            location: "",
+            jobType: "",
+            minSalary: "",
+            maxSalary: "",
+        },
+        pagination: {
+            currentPage: 1,
+            totalPages: 1,
+            totalJobs: 0,
+        },
     },
     reducers:{
         // actions
@@ -33,7 +51,19 @@ const jobSlice = createSlice({
         },
         setSearchedQuery:(state,action) => {
             state.searchedQuery = action.payload;
-        }
+        },
+        setFilterOptions:(state,action) => {
+            state.filterOptions = action.payload;
+        },
+        setFilters:(state,action) => {
+            state.filters = { ...state.filters, ...action.payload };
+        },
+        resetFilters:(state) => {
+            state.filters = { location: "", jobType: "", minSalary: "", maxSalary: "" };
+        },
+        setPagination:(state,action) => {
+            state.pagination = action.payload;
+        },
     }
 });
 export const {
@@ -43,6 +73,10 @@ export const {
     setSearchJobByText, 
     setAllAppliedJobs,
     setSearchedQuery,
-    setIsLoading
+    setIsLoading,
+    setFilterOptions,
+    setFilters,
+    resetFilters,
+    setPagination,
 } = jobSlice.actions;
 export default jobSlice.reducer;
