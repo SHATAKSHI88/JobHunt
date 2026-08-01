@@ -22,13 +22,20 @@ const CategoryCarousel = () => {
     }
 
     return (
-        <div>
-            <Carousel className="w-full max-w-xl mx-auto my-20">
+        <section className='max-w-7xl mx-auto px-4'>
+            <p className='text-center text-sm font-medium text-muted-foreground mt-12'>Popular categories</p>
+            <Carousel className="w-full max-w-2xl mx-auto mt-4 mb-4">
                 <CarouselContent>
                     {
-                        category.map((cat, index) => (
-                            <CarouselItem className="md:basis-1/2 lg-basis-1/3">
-                                <Button onClick={()=>searchJobHandler(cat)} variant="outline" className="rounded-full">{cat}</Button>
+                        category.map((cat) => (
+                            <CarouselItem key={cat} className="basis-auto pr-2">
+                                <Button
+                                    onClick={() => searchJobHandler(cat)}
+                                    variant="outline"
+                                    className="rounded-full whitespace-nowrap hover:border-primary hover:text-primary"
+                                >
+                                    {cat}
+                                </Button>
                             </CarouselItem>
                         ))
                     }
@@ -36,7 +43,7 @@ const CategoryCarousel = () => {
                 <CarouselPrevious />
                 <CarouselNext />
             </Carousel>
-        </div>
+        </section>
     )
 }
 

@@ -10,7 +10,7 @@ import { setAllApplicants } from '@/redux/applicationSlice';
 const Applicants = () => {
     const params = useParams();
     const dispatch = useDispatch();
-    const {applicants} = useSelector(store=>store.application);
+    const { applicants } = useSelector(store => store.application);
 
     useEffect(() => {
         const fetchAllApplicants = async () => {
@@ -26,9 +26,14 @@ const Applicants = () => {
     return (
         <div>
             <Navbar />
-            <div className='max-w-7xl mx-auto'>
-                <h1 className='font-bold text-xl my-5'>Applicants {applicants?.applications?.length}</h1>
-                <ApplicantsTable />
+            <div className='max-w-6xl mx-auto px-4 my-8'>
+                <div className='mb-6'>
+                    <h1 className='font-heading font-extrabold text-2xl'>Applicants</h1>
+                    <p className='text-muted-foreground text-sm mt-1'>{applicants?.applications?.length ?? 0} people have applied for {applicants?.title || "this role"}.</p>
+                </div>
+                <div className='bg-card border border-border rounded-lg overflow-hidden'>
+                    <ApplicantsTable />
+                </div>
             </div>
         </div>
     )

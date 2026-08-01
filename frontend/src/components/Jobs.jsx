@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import Navbar from './shared/Navbar'
 import FilterCard from './FilterCard'
 import Job from './Job';
+import { Skeleton } from './ui/skeleton';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-
-// const jobsArray = [1, 2, 3, 4, 5, 6, 7, 8];
+import { SearchX } from 'lucide-react';
 
 const Jobs = () => {
-    const { allJobs, searchedQuery } = useSelector(store => store.job);
+    const { allJobs, searchedQuery, isLoading } = useSelector(store => store.job);
     const [filterJobs, setFilterJobs] = useState(allJobs);
 
     useEffect(() => {
@@ -27,35 +27,57 @@ const Jobs = () => {
     return (
         <div>
             <Navbar />
-            <div className='max-w-7xl mx-auto mt-5'>
-                <div className='flex gap-5'>
-                    <div className='w-20%'>
+            <div className='max-w-7xl mx-auto px-4 mt-6'>
+                <div className='flex gap-6'>
+                    <aside className='w-72 shrink-0 hidden md:block'>
                         <FilterCard />
-                    </div>
-                    {
-                        filterJobs.length <= 0 ? <span>Job not found</span> : (
-                            <div className='flex-1 h-[88vh] overflow-y-auto pb-5'>
-                                <div className='grid grid-cols-3 gap-4'>
-                                    {
-                                        filterJobs.map((job) => (
-                                            <motion.div
-                                                initial={{ opacity: 0, x: 100 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: -100 }}
-                                                transition={{ duration: 0.3 }}
-                                                key={job?._id}>
-                                                <Job job={job} />
-                                            </motion.div>
-                                        ))
-                                    }
+                    </aside>
+
+                    <div className='flex-1 min-w-0'>
+                        <p className='text-sm text-muted-foreground mb-4'>
+                            {isLoading ? "Searching…" : `${filterJobs.length} job${filterJobs.length === 1 ? "" : "s"} found`}
+                        </p>
+
+                        {
+                            isLoading ? (
+                                <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 pb-10'>
+                                    {Array.from({ length: 6 }).map((_, i) => (
+                                        <div key={i} className='p-5 rounded-lg border border-border bg-card space-y-3'>
+                                            <Skeleton className='h-4 w-20' />
+                                            <Skeleton className='h-10 w-10 rounded-md' />
+                                            <Skeleton className='h-5 w-3/4' />
+                                            <Skeleton className='h-4 w-full' />
+                                        </div>
+                                    ))}
                                 </div>
-                            </div>
-                        )
-                    }
+                            ) : filterJobs.length <= 0 ? (
+                                <div className='flex flex-col items-center justify-center text-center py-24 border border-dashed border-border rounded-lg'>
+                                    <SearchX className='h-10 w-10 text-muted-foreground mb-3' />
+                                    <p className='font-semibold'>No jobs match your search</p>
+                                    <p className='text-sm text-muted-foreground mt-1'>Try a different keyword or clear your filters.</p>
+                                </div>
+                            ) : (
+                                <div className='h-[calc(100vh-13rem)] overflow-y-auto scroll-thin pb-5 pr-1'>
+                                    <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5'>
+                                        {
+                                            filterJobs.map((job) => (
+                                                <motion.div
+                                                    initial={{ opacity: 0, y: 12 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -12 }}
+                                                    transition={{ duration: 0.25 }}
+                                                    key={job?._id}>
+                                                    <Job job={job} />
+                                                </motion.div>
+                                            ))
+                                        }
+                                    </div>
+                                </div>
+                            )
+                        }
+                    </div>
                 </div>
             </div>
-
-
         </div>
     )
 }

@@ -1,57 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/*
+  JobHunt design tokens — professional/corporate palette (deep blue primary,
+  emerald accent for positive actions), with a full dark-mode set.
+  Values are HSL triplets consumed by tailwind.config.js as hsl(var(--x)).
+*/
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 217 78% 37%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 94%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 94%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 158 64% 32%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 89%;
+    --input: 214 32% 89%;
+    --ring: 217 78% 37%;
+
+    --radius: 0.65rem;
+  }
+
+  .dark {
+    --background: 222 47% 7%;
+    --foreground: 213 27% 91%;
+
+    --card: 222 39% 11%;
+    --card-foreground: 213 27% 91%;
+
+    --popover: 222 39% 11%;
+    --popover-foreground: 213 27% 91%;
+
+    --primary: 217 85% 63%;
+    --primary-foreground: 222 47% 9%;
+
+    --secondary: 222 30% 16%;
+    --secondary-foreground: 213 27% 91%;
+
+    --muted: 222 30% 16%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 158 55% 45%;
+    --accent-foreground: 222 47% 9%;
+
+    --destructive: 0 63% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 25% 20%;
+    --input: 222 25% 20%;
+    --ring: 217 85% 63%;
+  }
 }
 
-/* Root */
-html,
-body,
-#root {
-  width: 100%;
-  min-height: 100%;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
-    sans-serif;
-  background-color: #ffffff;
-  color: #111827;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    min-width: 320px;
+    min-height: 100vh;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Manrope", "Inter", system-ui, sans-serif;
+    letter-spacing: -0.01em;
+  }
 }
 
-/* Body */
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
+@layer base {
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  img {
+    max-width: 100%;
+    display: block;
+  }
+  ul, ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
 }
 
-/* Links */
-a {
-  text-decoration: none;
-  color: inherit;
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-/* Images */
-img {
-  max-width: 100%;
-  display: block;
+/* Thin, quiet scrollbar for scroll containers (job list, tables) */
+.scroll-thin::-webkit-scrollbar {
+  width: 8px;
 }
-
-/* Buttons */
-button {
-  cursor: pointer;
-  border: none;
-  outline: none;
+.scroll-thin::-webkit-scrollbar-track {
   background: transparent;
-  font: inherit;
 }
-
-/* Lists */
-ul,
-ol {
-  list-style: none;
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 999px;
 }

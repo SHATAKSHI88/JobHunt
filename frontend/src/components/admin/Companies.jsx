@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import useGetAllCompanies from '@/hooks/useGetAllCompanies'
 import { useDispatch } from 'react-redux'
 import { setSearchCompanyByText } from '@/redux/companySlice'
+import { Plus, Search } from 'lucide-react'
 
 const Companies = () => {
     useGetAllCompanies();
@@ -14,22 +15,33 @@ const Companies = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    useEffect(()=>{
+    useEffect(() => {
         dispatch(setSearchCompanyByText(input));
-    },[input]);
+    }, [input]);
     return (
         <div>
             <Navbar />
-            <div className='max-w-6xl mx-auto my-10'>
-                <div className='flex items-center justify-between my-5'>
+            <div className='max-w-6xl mx-auto px-4 my-8'>
+                <div className='flex items-center justify-between mb-6'>
+                    <div>
+                        <h1 className='font-heading font-extrabold text-2xl'>Companies</h1>
+                        <p className='text-muted-foreground text-sm mt-1'>Manage the companies you recruit for.</p>
+                    </div>
+                    <Button onClick={() => navigate("/admin/companies/create")}>
+                        <Plus className='h-4 w-4 mr-2' /> New company
+                    </Button>
+                </div>
+                <div className='relative mb-4 max-w-xs'>
+                    <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground' />
                     <Input
-                        className="w-fit"
+                        className="pl-9"
                         placeholder="Filter by name"
                         onChange={(e) => setInput(e.target.value)}
                     />
-                    <Button onClick={() => navigate("/admin/companies/create")}>New Company</Button>
                 </div>
-                <CompaniesTable/>
+                <div className='bg-card border border-border rounded-lg overflow-hidden'>
+                    <CompaniesTable />
+                </div>
             </div>
         </div>
     )
