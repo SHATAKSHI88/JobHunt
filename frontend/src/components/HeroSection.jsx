@@ -150,28 +150,30 @@ const HeroSection = () => {
 
                     {
                         showSuggestions && suggestions.length > 0 && (
-                            <div className='absolute z-50 top-full mt-2 w-full rounded-xl border border-border bg-card shadow-lg overflow-hidden text-left'>
-                                {suggestions.map((job) => (
-                                    <button
-                                        type="button"
-                                        key={job._id}
-                                        onClick={() => goToJob(job._id)}
-                                        className='flex w-full items-center gap-3 px-4 py-3 hover:bg-muted transition-colors border-b border-border last:border-0'
-                                    >
-                                        <span className='flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary'>
-                                            <Briefcase className='h-3.5 w-3.5' />
-                                        </span>
-                                        <div className='min-w-0 flex-1'>
-                                            <p className='text-sm font-medium truncate'>{job.title}</p>
-                                            <p className='text-xs text-muted-foreground flex items-center gap-1 truncate'>
-                                                {job.company?.name} <MapPin className='h-3 w-3 shrink-0' /> {job.location}
-                                            </p>
-                                        </div>
-                                    </button>
-                                ))}
+                            <div className='absolute z-50 top-full mt-2 w-full rounded-xl border border-border bg-card shadow-lg text-left overflow-hidden'>
+                                <div>
+                                    {suggestions.map((job) => (
+                                        <button
+                                            type="button"
+                                            key={job._id}
+                                            onClick={() => goToJob(job._id)}
+                                            className='flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-muted transition-colors border-b border-border last:border-0'
+                                        >
+                                            <span className='flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary'>
+                                                <Briefcase className='h-3.5 w-3.5' />
+                                            </span>
+                                            <div className='min-w-0 flex-1 text-left'>
+                                                <p className='text-sm font-medium truncate'>{job.title}</p>
+                                                <p className='text-xs text-muted-foreground flex items-center gap-1 truncate'>
+                                                    {job.company?.name} <MapPin className='h-3 w-3 shrink-0' /> {job.location}
+                                                </p>
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
                                 <button
                                     type="submit"
-                                    className='flex w-full items-center gap-2 px-4 py-2.5 text-sm text-primary font-medium hover:bg-muted transition-colors'
+                                    className='flex w-full items-center gap-2 px-4 py-2.5 text-sm text-left text-primary font-medium hover:bg-muted transition-colors border-t border-border'
                                 >
                                     <Search className='h-3.5 w-3.5' /> See all results for "{query}"
                                 </button>
