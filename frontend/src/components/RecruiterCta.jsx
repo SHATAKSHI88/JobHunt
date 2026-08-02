@@ -11,7 +11,7 @@ const RecruiterCta = () => {
     if (user?.role === 'recruiter') return null;
 
     return (
-        <section className='max-w-7xl mx-auto px-4 mb-20'>
+        <section className='max-w-7xl mx-auto px-4 my-20'>
             <div className='relative overflow-hidden rounded-xl bg-primary px-8 py-12 sm:px-14 text-center'>
                 <div
                     className='pointer-events-none absolute inset-0 opacity-[0.12]'

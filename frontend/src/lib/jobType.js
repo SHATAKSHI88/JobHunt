@@ -17,3 +17,10 @@ export const daysAgo = (mongodbTime) => {
     if (diffDays === 1) return "1 day ago";
     return `${diffDays} days ago`;
 };
+
+// Posted within the last 2 days — used to show a "New" badge on job cards.
+export const isRecent = (mongodbTime) => {
+    if (!mongodbTime) return false;
+    const diffDays = (Date.now() - new Date(mongodbTime).getTime()) / (1000 * 60 * 60 * 24);
+    return diffDays <= 2;
+};

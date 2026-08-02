@@ -64,7 +64,19 @@ const HeroSection = () => {
 
     return (
         <section className='relative overflow-hidden border-b border-border bg-gradient-to-b from-secondary/50 to-background'>
-            <div className='max-w-7xl mx-auto px-4 py-20 text-center'>
+            {/* decorative background depth */}
+            <div
+                className='pointer-events-none absolute inset-0 opacity-[0.4]'
+                style={{
+                    backgroundImage: "radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px)",
+                    backgroundSize: "28px 28px",
+                    maskImage: "radial-gradient(ellipse 60% 60% at 50% 0%, black 40%, transparent 100%)",
+                }}
+            />
+            <div className='pointer-events-none absolute top-[-10%] left-[8%] h-72 w-72 rounded-full bg-primary/10 blur-3xl' />
+            <div className='pointer-events-none absolute top-[-5%] right-[8%] h-72 w-72 rounded-full bg-accent/10 blur-3xl' />
+
+            <div className='relative max-w-7xl mx-auto px-4 py-20 text-center'>
                 <span ref={badgeRef} className='inline-flex mx-auto px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold'>
                     Trusted by job seekers and recruiters
                 </span>

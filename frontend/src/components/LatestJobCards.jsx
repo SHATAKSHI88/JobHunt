@@ -4,7 +4,7 @@ import { Button } from './ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
 import { Bookmark, BookmarkCheck } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { jobTypeAccent } from '@/lib/jobType'
+import { jobTypeAccent, isRecent } from '@/lib/jobType'
 import useSaveJob from '@/hooks/useSaveJob'
 
 const LatestJobCards = ({ job }) => {
@@ -41,6 +41,11 @@ const LatestJobCards = ({ job }) => {
                 <p className='text-sm text-muted-foreground mt-1 line-clamp-2'>{job?.description}</p>
             </div>
             <div className='flex items-center flex-wrap gap-1.5 mt-4'>
+                {
+                    isRecent(job?.createdAt) && (
+                        <Badge className="font-bold uppercase tracking-wide text-[10px] bg-accent text-accent-foreground hover:bg-accent">New</Badge>
+                    )
+                }
                 <Badge variant="secondary" className="font-medium">{job?.position} positions</Badge>
                 <Badge variant="secondary" className="font-medium">{job?.jobType}</Badge>
                 <Badge variant="secondary" className="font-medium">₹{job?.salary} LPA</Badge>
