@@ -6,6 +6,7 @@ import {
     getAllJobs,
     getFilterOptions,
     getJobById,
+    getRelatedJobs,
     postJob,
     updateJob,
     deleteJob,
@@ -20,6 +21,7 @@ router.route("/get").get(getAllJobs);
 router.route("/filters").get(getFilterOptions);
 router.route("/getadminjobs").get(isAuthenticated, getAdminJobs);
 router.route("/get/:id").get(getJobById);
+router.route("/related/:id").get(getRelatedJobs);
 router.route("/update/:id").put(isAuthenticated, jdUpload, updateJob);
 router.route("/delete/:id").delete(isAuthenticated, deleteJob);
 

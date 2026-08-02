@@ -173,6 +173,29 @@ export const getJobById = asyncHandler(async (req, res) => {
     return res.status(200).json({ job, success: true });
 });
 
+// "Jobs like this" — same job type or same company as the given job,
+// excluding itself, most recent first. Public, same as browsing.
+export const getRelatedJobs = asyncHandler(async (req, res) => {
+    const jobId = req.params.id;
+    const job = await Job.findById(jobId).select("jobType company");
+    if (!job) {
+        throw new ApiError(404, "Job not found.");
+    }
+
+    const relatedJobs = await Job.find({
+        _id: { $ne: jobId },
+        $or: [
+            { jobType: job.jobType },
+            { company: job.company },
+        ],
+    })
+        .populate({ path: "company" })
+        .sort({ createdAt: -1 })
+        .limit(4);
+
+    return res.status(200).json({ relatedJobs, success: true });
+});
+
 // jobs a specific recruiter has posted
 export const getAdminJobs = asyncHandler(async (req, res) => {
     const adminId = req.id;

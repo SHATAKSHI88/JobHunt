@@ -12,6 +12,8 @@ import { setSingleJob } from '@/redux/jobSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import useSaveJob from '@/hooks/useSaveJob';
+import Job from './Job';
+import { Sparkles } from 'lucide-react';
 
 const infoRow = (Icon, label, value) => (
     <div className='flex items-start gap-3'>
@@ -30,6 +32,7 @@ const JobDescription = () => {
     const { user } = useSelector(store => store.auth);
     const isIntiallyApplied = singleJob?.applications?.some(application => application.applicant === user?._id) || false;
     const [isApplied, setIsApplied] = useState(isIntiallyApplied);
+    const [relatedJobs, setRelatedJobs] = useState([]);
 
     const params = useParams();
     const jobId = params.id;
@@ -60,6 +63,20 @@ const JobDescription = () => {
         }
         fetchSingleJob();
     }, [jobId, dispatch, user?._id]);
+
+    useEffect(() => {
+        const fetchRelatedJobs = async () => {
+            try {
+                const res = await axios.get(`${JOB_API_END_POINT}/related/${jobId}`);
+                if (res.data.success) {
+                    setRelatedJobs(res.data.relatedJobs);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        fetchRelatedJobs();
+    }, [jobId]);
 
     return (
         <div>
@@ -118,6 +135,19 @@ const JobDescription = () => {
                         {infoRow(CalendarDays, "Posted", singleJob?.createdAt?.split("T")[0])}
                     </div>
                 </div>
+
+                {
+                    relatedJobs.length > 0 && (
+                        <div className='mt-8'>
+                            <h2 className='font-heading font-bold text-lg mb-4 flex items-center gap-2'>
+                                <Sparkles className='h-4 w-4 text-primary' /> Jobs like this
+                            </h2>
+                            <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+                                {relatedJobs.map((job) => <Job key={job._id} job={job} />)}
+                            </div>
+                        </div>
+                    )
+                }
             </div>
         </PageTransition>
         </div>
