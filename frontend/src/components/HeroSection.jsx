@@ -78,7 +78,12 @@ const HeroSection = () => {
               .fromTo(headlineRef.current, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6 }, "-=0.25")
               .fromTo(subRef.current, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5 }, "-=0.3")
               .fromTo(formRef.current, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5 }, "-=0.3")
-              .fromTo(statsRef.current?.children || [], { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.12 }, "-=0.2");
+              .fromTo(
+                  statsRef.current?.children || [],
+                  { opacity: 0, y: 10 },
+                  { opacity: 1, y: 0, duration: 0.4, stagger: 0.12, clearProps: "transform" },
+                  "-=0.2"
+              );
 
             // animated count-up for the stat numbers
             counterRefs.current.forEach((el, i) => {
@@ -145,7 +150,7 @@ const HeroSection = () => {
 
                     {
                         showSuggestions && suggestions.length > 0 && (
-                            <div className='absolute z-20 top-full mt-2 w-full rounded-xl border border-border bg-card shadow-lg overflow-hidden text-left'>
+                            <div className='absolute z-50 top-full mt-2 w-full rounded-xl border border-border bg-card shadow-lg overflow-hidden text-left'>
                                 {suggestions.map((job) => (
                                     <button
                                         type="button"
