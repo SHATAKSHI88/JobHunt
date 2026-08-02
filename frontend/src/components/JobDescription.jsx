@@ -7,7 +7,7 @@ import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
 import { MapPin, Briefcase, Wallet, GraduationCap, Users, CalendarDays, CheckCircle2, Bookmark, BookmarkCheck } from 'lucide-react'
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { APPLICATION_API_END_POINT, JOB_API_END_POINT } from '@/utils/constant';
+import { JOB_API_END_POINT } from '@/utils/constant';
 import { setSingleJob } from '@/redux/jobSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
@@ -37,25 +37,13 @@ const JobDescription = () => {
     const navigate = useNavigate();
     const { isSaved, toggleSave, pending } = useSaveJob(jobId);
 
-    const applyJobHandler = async () => {
+    const applyJobHandler = () => {
         if (!user) {
             toast.info("Log in to apply for this job.");
             navigate("/login");
             return;
         }
-        try {
-            const res = await axios.get(`${APPLICATION_API_END_POINT}/apply/${jobId}`, { withCredentials: true });
-
-            if (res.data.success) {
-                setIsApplied(true);
-                const updatedSingleJob = { ...singleJob, applications: [...singleJob.applications, { applicant: user?._id }] }
-                dispatch(setSingleJob(updatedSingleJob));
-                toast.success(res.data.message);
-            }
-        } catch (error) {
-            console.log(error);
-            toast.error(error.response?.data?.message || "Something went wrong.");
-        }
+        navigate(`/jobs/${jobId}/apply`);
     }
 
     useEffect(() => {

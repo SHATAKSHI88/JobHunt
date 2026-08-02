@@ -10,6 +10,7 @@ import Browse from './components/Browse'
 import SavedJobs from './components/SavedJobs'
 import Profile from './components/Profile'
 import JobDescription from './components/JobDescription'
+import ApplyJobForm from './components/ApplyJobForm'
 import Companies from './components/admin/Companies'
 import CompanyCreate from './components/admin/CompanyCreate'
 import CompanySetup from './components/admin/CompanySetup'
@@ -19,6 +20,9 @@ import PostJob from './components/admin/PostJob'
 import Applicants from './components/admin/Applicants'
 import ProtectedRoute from './components/admin/ProtectedRoute'
 import RequireAuth from './components/shared/RequireAuth'
+import InterviewRoom from './components/InterviewRoom'
+import ApplicantDetail from './components/admin/ApplicantDetail'
+import AdminJobDetail from './components/admin/AdminJobDetail'
 
 
 const appRouter = createBrowserRouter([
@@ -51,6 +55,10 @@ const appRouter = createBrowserRouter([
     element: <JobDescription />
   },
   {
+    path: "/jobs/:id/apply",
+    element: <ApplyJobForm />
+  },
+  {
     path: "/browse",
     element: <Browse />
   },
@@ -61,6 +69,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/saved-jobs",
     element: <RequireAuth><SavedJobs /></RequireAuth>
+  },
+  {
+    path: "/interview/:interviewId",
+    element: <RequireAuth><InterviewRoom /></RequireAuth>
   },
   // admin ke liye yha se start hoga
   {
@@ -88,8 +100,16 @@ const appRouter = createBrowserRouter([
     element:<ProtectedRoute><PostJob/></ProtectedRoute> 
   },
   {
+    path:"/admin/jobs/:id",
+    element:<ProtectedRoute><AdminJobDetail/></ProtectedRoute> 
+  },
+  {
     path:"/admin/jobs/:id/applicants",
     element:<ProtectedRoute><Applicants/></ProtectedRoute> 
+  },
+  {
+    path:"/admin/applicants/:id",
+    element:<ProtectedRoute><ApplicantDetail/></ProtectedRoute> 
   },
 
 ])

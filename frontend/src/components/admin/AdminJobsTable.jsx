@@ -3,7 +3,7 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Badge } from '../ui/badge'
-import { Eye, MoreHorizontal, Trash2, Inbox } from 'lucide-react'
+import { Eye, MoreHorizontal, Trash2, Inbox, Pencil } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -66,7 +66,7 @@ const AdminJobsTable = () => {
             <TableBody>
                 {
                     filterJobs?.map((job) => (
-                        <TableRow key={job._id}>
+                        <TableRow key={job._id} className="cursor-pointer" onClick={() => navigate(`/admin/jobs/${job._id}`)}>
                             <TableCell className='flex items-center gap-2'>
                                 <Avatar className="h-7 w-7 rounded-md">
                                     <AvatarImage src={job?.company?.logo} />
@@ -77,10 +77,14 @@ const AdminJobsTable = () => {
                             <TableCell className="font-medium">{job?.title}</TableCell>
                             <TableCell><Badge variant="secondary">{job?.applications?.length ?? 0}</Badge></TableCell>
                             <TableCell className="text-muted-foreground">{job?.createdAt?.split("T")[0]}</TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                                 <Popover>
                                     <PopoverTrigger className="p-1.5 rounded-md hover:bg-muted transition-colors"><MoreHorizontal className='h-4 w-4' /></PopoverTrigger>
                                     <PopoverContent className="w-40 p-1">
+                                        <button onClick={() => navigate(`/admin/jobs/${job._id}`)} className='flex items-center gap-2 w-full text-left px-2 py-2 rounded-md text-sm hover:bg-muted transition-colors'>
+                                            <Pencil className='h-4 w-4' />
+                                            View / edit
+                                        </button>
                                         <button onClick={() => navigate(`/admin/jobs/${job._id}/applicants`)} className='flex items-center gap-2 w-full text-left px-2 py-2 rounded-md text-sm hover:bg-muted transition-colors'>
                                             <Eye className='h-4 w-4' />
                                             Applicants

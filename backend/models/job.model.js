@@ -32,6 +32,19 @@ const jobSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    // JD PDF, uploaded by the recruiter when posting the job. jdText is the
+    // extracted plain text, cached here so we don't re-parse the PDF on
+    // every single application — it's what the Gemini matcher compares
+    // resumes against.
+    jdUrl: {
+        type: String,
+    },
+    jdOriginalName: {
+        type: String,
+    },
+    jdText: {
+        type: String,
+    },
     company: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Company',

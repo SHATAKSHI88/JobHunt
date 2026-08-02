@@ -2,6 +2,9 @@ import { Job } from "../models/job.model.js";
 import { Company } from "../models/company.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
+import cloudinary from "../utils/cloudinary.js";
+import getDataUri from "../utils/datauri.js";
+import { extractTextFromBuffer } from "../utils/pdfText.js";
 
 // recruiter posts a job
 export const postJob = asyncHandler(async (req, res) => {
@@ -39,6 +42,27 @@ export const postJob = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Position count must be at least 1.");
     }
 
+    // JD PDF is optional. If provided, we upload it to Cloudinary (so
+    // candidates/recruiters can view the original file) and extract its
+    // text (so the auto-shortlisting matcher has something to compare
+    // resumes against). A parse failure never blocks job creation — the
+    // job just won't get auto-shortlisting until the JD is re-uploaded.
+    let jdUrl, jdOriginalName, jdText;
+    if (req.file) {
+        if (req.file.mimetype !== "application/pdf") {
+            throw new ApiError(400, "Job description file must be a PDF.");
+        }
+        const fileUri = getDataUri(req.file);
+        const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+        jdUrl = cloudResponse.secure_url;
+        jdOriginalName = req.file.originalname;
+        try {
+            jdText = await extractTextFromBuffer(req.file.buffer);
+        } catch (error) {
+            console.error("Failed to extract text from JD PDF:", error.message);
+        }
+    }
+
     const job = await Job.create({
         title,
         description,
@@ -50,6 +74,9 @@ export const postJob = asyncHandler(async (req, res) => {
         position,
         company: companyId,
         created_by: userId,
+        jdUrl,
+        jdOriginalName,
+        jdText,
     });
 
     return res.status(201).json({
@@ -189,6 +216,23 @@ export const updateJob = asyncHandler(async (req, res) => {
     if (jobType) job.jobType = jobType;
     if (experience) job.experienceLevel = experience;
     if (position) job.position = position;
+
+    // JD PDF replacement is optional here too — same upload + text
+    // extraction as postJob. A parse failure never blocks the update.
+    if (req.file) {
+        if (req.file.mimetype !== "application/pdf") {
+            throw new ApiError(400, "Job description file must be a PDF.");
+        }
+        const fileUri = getDataUri(req.file);
+        const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+        job.jdUrl = cloudResponse.secure_url;
+        job.jdOriginalName = req.file.originalname;
+        try {
+            job.jdText = await extractTextFromBuffer(req.file.buffer);
+        } catch (error) {
+            console.error("Failed to extract text from JD PDF:", error.message);
+        }
+    }
 
     await job.save();
 

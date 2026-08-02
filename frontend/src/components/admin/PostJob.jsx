@@ -9,7 +9,7 @@ import axios from 'axios'
 import { JOB_API_END_POINT } from '@/utils/constant'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Upload } from 'lucide-react'
 
 const jobTypes = ["Full-time", "Part-time", "Internship", "Contract"];
 
@@ -25,12 +25,23 @@ const PostJob = () => {
         position: 1,
         companyId: ""
     });
+    const [jdFile, setJdFile] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const { companies } = useSelector(store => store.company);
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
+    };
+
+    const jdFileChangeHandler = (e) => {
+        const file = e.target.files?.[0];
+        if (file && file.type !== "application/pdf") {
+            toast.error("Job description must be a PDF file.");
+            e.target.value = "";
+            return;
+        }
+        setJdFile(file || null);
     };
 
     const selectChangeHandler = (value) => {
@@ -46,8 +57,12 @@ const PostJob = () => {
         e.preventDefault();
         try {
             setLoading(true);
-            const res = await axios.post(`${JOB_API_END_POINT}/post`, input, {
-                headers: { 'Content-Type': 'application/json' },
+            const formData = new FormData();
+            Object.entries(input).forEach(([key, value]) => formData.append(key, value));
+            if (jdFile) formData.append("jdFile", jdFile);
+
+            const res = await axios.post(`${JOB_API_END_POINT}/post`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
                 withCredentials: true
             });
             if (res.data.success) {
@@ -113,6 +128,24 @@ const PostJob = () => {
                             <div className='space-y-1.5'>
                                 <Label>Number of positions</Label>
                                 <Input type="number" min={1} name="position" value={input.position} onChange={changeEventHandler} required />
+                            </div>
+                            <div className='space-y-1.5 sm:col-span-2'>
+                                <Label>Job description PDF <span className='text-muted-foreground font-normal'>(optional — enables AI resume shortlisting)</span></Label>
+                                <div className='flex items-center gap-3'>
+                                    <label htmlFor='jdFile' className='flex items-center gap-2 cursor-pointer text-sm border border-dashed border-border rounded-md px-3 py-2 hover:bg-muted transition-colors'>
+                                        <Upload className='h-4 w-4' />
+                                        {jdFile ? jdFile.name : "Choose PDF"}
+                                    </label>
+                                    <input id='jdFile' type='file' accept='application/pdf' className='hidden' onChange={jdFileChangeHandler} />
+                                    {jdFile && (
+                                        <Button type='button' variant='ghost' size='sm' onClick={() => { setJdFile(null); document.getElementById('jdFile').value = ""; }}>
+                                            Remove
+                                        </Button>
+                                    )}
+                                </div>
+                                <p className='text-xs text-muted-foreground'>
+                                    Upload the full JD as a PDF and JobHunt will automatically score each applicant's resume against it and shortlist strong matches.
+                                </p>
                             </div>
                             {
                                 companies.length > 0 && (
