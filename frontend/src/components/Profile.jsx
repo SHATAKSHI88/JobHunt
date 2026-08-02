@@ -63,9 +63,9 @@ const Profile = () => {
                     <div className='px-6 sm:px-8 pb-6 sm:pb-8'>
                         <div className='flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-12'>
                             <div className='flex items-end gap-4'>
-                                <Avatar className="h-24 w-24 border-4 border-card shadow-md">
+                                <Avatar className="h-24 w-24 border-4 border-card shadow-lg ring-1 ring-black/5">
                                     <AvatarImage src={user?.profile?.profilePhoto} alt={user?.fullname} />
-                                    <AvatarFallback className="text-2xl font-heading font-bold bg-primary/15 text-primary">
+                                    <AvatarFallback className="text-2xl font-heading font-bold bg-primary text-primary-foreground">
                                         {user?.fullname?.[0]?.toUpperCase()}
                                     </AvatarFallback>
                                 </Avatar>
