@@ -10,6 +10,17 @@ const statusStyles = {
     pending: "bg-muted text-muted-foreground border-border",
 }
 
+const statusDot = {
+    accepted: "bg-accent",
+    rejected: "bg-destructive",
+    pending: "bg-muted-foreground",
+}
+
+const formatDate = (iso) => {
+    if (!iso) return "";
+    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
 const AppliedJobTable = () => {
     const { allAppliedJobs } = useSelector(store => store.job);
 
@@ -37,12 +48,13 @@ const AppliedJobTable = () => {
                 <TableBody>
                     {
                         allAppliedJobs.map((appliedJob) => (
-                            <TableRow key={appliedJob._id}>
-                                <TableCell className="text-muted-foreground">{appliedJob?.createdAt?.split("T")[0]}</TableCell>
+                            <TableRow key={appliedJob._id} className="hover:bg-muted/40 transition-colors">
+                                <TableCell className="text-muted-foreground whitespace-nowrap">{formatDate(appliedJob?.createdAt)}</TableCell>
                                 <TableCell className="font-medium">{appliedJob.job?.title}</TableCell>
-                                <TableCell>{appliedJob.job?.company?.name}</TableCell>
+                                <TableCell className="text-muted-foreground">{appliedJob.job?.company?.name}</TableCell>
                                 <TableCell className="text-right">
                                     <Badge variant="outline" className={statusStyles[appliedJob.status] || statusStyles.pending}>
+                                        <span className={`h-1.5 w-1.5 rounded-full mr-1.5 ${statusDot[appliedJob.status] || statusDot.pending}`} />
                                         {appliedJob.status.toUpperCase()}
                                     </Badge>
                                 </TableCell>

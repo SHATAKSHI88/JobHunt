@@ -94,6 +94,7 @@ export const login = asyncHandler(async (req, res) => {
         role: user.role,
         profile: user.profile,
         savedJobs: user.savedJobs,
+        createdAt: user.createdAt,
     };
 
     return res
@@ -151,6 +152,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
         role: user.role,
         profile: user.profile,
         savedJobs: user.savedJobs,
+        createdAt: user.createdAt,
     };
 
     return res.status(200).json({
