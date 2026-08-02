@@ -1,16 +1,19 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from '../shared/Navbar'
 import ApplicantsTable from './ApplicantsTable'
+import ApplicantsKanban from './ApplicantsKanban'
 import axios from 'axios';
 import { APPLICATION_API_END_POINT } from '@/utils/constant';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAllApplicants } from '@/redux/applicationSlice';
+import { LayoutGrid, List } from 'lucide-react';
 
 const Applicants = () => {
     const params = useParams();
     const dispatch = useDispatch();
     const { applicants } = useSelector(store => store.application);
+    const [view, setView] = useState('board'); // 'board' | 'table'
 
     useEffect(() => {
         const fetchAllApplicants = async () => {
@@ -23,17 +26,41 @@ const Applicants = () => {
         }
         fetchAllApplicants();
     }, []);
+
     return (
         <div>
             <Navbar />
             <div className='max-w-6xl mx-auto px-4 my-8'>
-                <div className='mb-6'>
-                    <h1 className='font-heading font-extrabold text-2xl'>Applicants</h1>
-                    <p className='text-muted-foreground text-sm mt-1'>{applicants?.applications?.length ?? 0} people have applied for {applicants?.title || "this role"}.</p>
+                <div className='flex items-start justify-between flex-wrap gap-3 mb-6'>
+                    <div>
+                        <h1 className='font-heading font-extrabold text-2xl'>Applicants</h1>
+                        <p className='text-muted-foreground text-sm mt-1'>{applicants?.applications?.length ?? 0} people have applied for {applicants?.title || "this role"}.</p>
+                    </div>
+                    <div className='inline-flex rounded-md border border-border p-0.5 bg-muted/40'>
+                        <button
+                            onClick={() => setView('board')}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium transition-colors ${view === 'board' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                        >
+                            <LayoutGrid className='h-3.5 w-3.5' /> Board
+                        </button>
+                        <button
+                            onClick={() => setView('table')}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium transition-colors ${view === 'table' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                        >
+                            <List className='h-3.5 w-3.5' /> Table
+                        </button>
+                    </div>
                 </div>
-                <div className='bg-card border border-border rounded-lg overflow-hidden'>
-                    <ApplicantsTable />
-                </div>
+
+                {
+                    view === 'board' ? (
+                        <ApplicantsKanban />
+                    ) : (
+                        <div className='bg-card border border-border rounded-lg overflow-hidden'>
+                            <ApplicantsTable />
+                        </div>
+                    )
+                }
             </div>
         </div>
     )

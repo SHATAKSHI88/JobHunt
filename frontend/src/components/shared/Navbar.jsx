@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Button } from '../ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar'
-import { LogOut, User2, Briefcase, Bookmark, Menu, X } from 'lucide-react'
+import { LogOut, User2, Briefcase, Bookmark, Menu, X, Search } from 'lucide-react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
@@ -10,6 +10,8 @@ import { USER_API_END_POINT } from '@/utils/constant'
 import { setUser } from '@/redux/authSlice'
 import { toast } from 'sonner'
 import ThemeToggle from './ThemeToggle'
+import CommandPalette from './CommandPalette'
+import RouteProgressBar from './RouteProgressBar'
 
 const navLinkClass = ({ isActive }) =>
     `relative py-1 transition-colors hover:text-foreground ${
@@ -58,6 +60,7 @@ const Navbar = () => {
 
     return (
         <header className='sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80'>
+            <RouteProgressBar />
             <div className='flex items-center justify-between mx-auto max-w-7xl h-16 px-4'>
                 <Link to="/" className='flex items-center gap-2' onClick={() => setMobileOpen(false)}>
                     <span className='flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground'>
@@ -79,6 +82,16 @@ const Navbar = () => {
                             ))}
                         </ul>
                     </nav>
+
+                    <Button
+                        variant="outline"
+                        onClick={() => window.dispatchEvent(new Event("open-command-palette"))}
+                        className="hidden md:flex items-center gap-2 text-muted-foreground font-normal h-9 px-3"
+                    >
+                        <Search className='h-3.5 w-3.5' />
+                        <span className='hidden lg:inline'>Search</span>
+                        <kbd className='hidden lg:inline-block ml-2 text-[10px] font-mono bg-muted px-1.5 py-0.5 rounded border border-border'>⌘K</kbd>
+                    </Button>
 
                     <ThemeToggle />
 
@@ -154,6 +167,12 @@ const Navbar = () => {
             {
                 mobileOpen && (
                     <div className='md:hidden border-t border-border bg-background px-4 py-4'>
+                        <button
+                            onClick={() => { window.dispatchEvent(new Event("open-command-palette")); setMobileOpen(false); }}
+                            className='flex w-full items-center gap-2 rounded-md border border-border px-3 py-2.5 text-sm text-muted-foreground mb-3'
+                        >
+                            <Search className='h-4 w-4' /> Search jobs & pages
+                        </button>
                         <nav>
                             <ul className='flex flex-col gap-1'>
                                 {navLinks.map((link) => (
@@ -208,6 +227,7 @@ const Navbar = () => {
                     </div>
                 )
             }
+            <CommandPalette />
         </header>
     )
 }
