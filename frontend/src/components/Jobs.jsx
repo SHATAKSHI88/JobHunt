@@ -8,6 +8,7 @@ import { Skeleton } from './ui/skeleton';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { SearchX } from 'lucide-react';
+import EmptyState from './shared/EmptyState';
 import useGetAllJobs from '@/hooks/useGetAllJobs';
 
 const Jobs = () => {
@@ -54,10 +55,12 @@ const Jobs = () => {
                                     ))}
                                 </div>
                             ) : allJobs.length <= 0 ? (
-                                <div className='flex flex-col items-center justify-center text-center py-24 border border-dashed border-border rounded-lg'>
-                                    <SearchX className='h-10 w-10 text-muted-foreground mb-3' />
-                                    <p className='font-semibold'>No jobs match your search</p>
-                                    <p className='text-sm text-muted-foreground mt-1'>Try a different keyword or clear your filters.</p>
+                                <div className='border border-dashed border-border rounded-lg'>
+                                    <EmptyState
+                                        variant="search"
+                                        title="No jobs match your search"
+                                        description="Try a different keyword or clear your filters."
+                                    />
                                 </div>
                             ) : (
                                 <div className='pb-5'>

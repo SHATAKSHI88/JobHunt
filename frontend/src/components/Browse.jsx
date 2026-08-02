@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSearchedQuery } from '@/redux/jobSlice';
 import useGetAllJobs from '@/hooks/useGetAllJobs';
 import { SearchX } from 'lucide-react';
+import EmptyState from './shared/EmptyState';
 
 const Browse = () => {
     const [page, setPage] = useState(1);
@@ -56,10 +57,12 @@ const Browse = () => {
                             ))}
                         </div>
                     ) : allJobs.length <= 0 ? (
-                        <div className='flex flex-col items-center justify-center text-center py-24 border border-dashed border-border rounded-lg'>
-                            <SearchX className='h-10 w-10 text-muted-foreground mb-3' />
-                            <p className='font-semibold'>Nothing matches that search</p>
-                            <p className='text-sm text-muted-foreground mt-1'>Try a broader keyword.</p>
+                        <div className='border border-dashed border-border rounded-lg'>
+                            <EmptyState
+                                variant="search"
+                                title="Nothing matches that search"
+                                description="Try a broader keyword."
+                            />
                         </div>
                     ) : (
                         <>

@@ -6,6 +6,7 @@ import { Skeleton } from './ui/skeleton'
 import axios from 'axios'
 import { USER_API_END_POINT } from '@/utils/constant'
 import { Bookmark } from 'lucide-react'
+import EmptyState from './shared/EmptyState'
 
 const SavedJobs = () => {
     const [savedJobs, setSavedJobs] = useState([]);
@@ -50,10 +51,12 @@ const SavedJobs = () => {
                             ))}
                         </div>
                     ) : savedJobs.length <= 0 ? (
-                        <div className='flex flex-col items-center justify-center text-center py-24 border border-dashed border-border rounded-lg'>
-                            <Bookmark className='h-10 w-10 text-muted-foreground mb-3' />
-                            <p className='font-semibold'>No saved jobs yet</p>
-                            <p className='text-sm text-muted-foreground mt-1'>Tap the bookmark icon on any job to save it here.</p>
+                        <div className='border border-dashed border-border rounded-lg'>
+                            <EmptyState
+                                variant="bookmark"
+                                title="No saved jobs yet"
+                                description="Tap the bookmark icon on any job to save it here."
+                            />
                         </div>
                     ) : (
                         <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5'>

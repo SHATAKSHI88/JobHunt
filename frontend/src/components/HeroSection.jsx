@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Button } from './ui/button'
-import { Search, Briefcase, Building2, Users } from 'lucide-react'
+import { Search, Briefcase, Building2, Users, MapPin } from 'lucide-react'
 import { useDispatch } from 'react-redux';
 import { setSearchedQuery } from '@/redux/jobSlice';
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
+import axios from 'axios';
+import { JOB_API_END_POINT } from '@/utils/constant';
 
 const stats = [
     { icon: Briefcase, label: "Live roles", value: 1200, suffix: "+" },
@@ -14,6 +16,8 @@ const stats = [
 
 const HeroSection = () => {
     const [query, setQuery] = useState("");
+    const [suggestions, setSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -26,9 +30,43 @@ const HeroSection = () => {
 
     const searchJobHandler = (e) => {
         e.preventDefault();
+        setShowSuggestions(false);
         dispatch(setSearchedQuery(query));
         navigate("/browse");
     }
+
+    const goToJob = (jobId) => {
+        setShowSuggestions(false);
+        navigate(`/description/${jobId}`);
+    }
+
+    // debounced live suggestions as the user types
+    useEffect(() => {
+        if (!query.trim()) {
+            setSuggestions([]);
+            return;
+        }
+        const handle = setTimeout(async () => {
+            try {
+                const res = await axios.get(`${JOB_API_END_POINT}/get?keyword=${encodeURIComponent(query)}&limit=5`);
+                if (res.data.success) setSuggestions(res.data.jobs);
+            } catch (error) {
+                console.log(error);
+            }
+        }, 300);
+        return () => clearTimeout(handle);
+    }, [query]);
+
+    // close the dropdown on outside click
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (formRef.current && !formRef.current.contains(e.target)) {
+                setShowSuggestions(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     useEffect(() => {
         const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -89,17 +127,52 @@ const HeroSection = () => {
                     no noise, just roles worth applying to.
                 </p>
 
-                <form ref={formRef} onSubmit={searchJobHandler} className='flex w-full max-w-xl shadow-sm border border-border bg-card pl-4 rounded-full items-center gap-2 mx-auto mt-8'>
-                    <Search className='h-4 w-4 text-muted-foreground shrink-0' />
-                    <input
-                        type="text"
-                        placeholder='Job title, keyword, or company'
-                        onChange={(e) => setQuery(e.target.value)}
-                        className='outline-none border-none w-full bg-transparent py-3 text-sm placeholder:text-muted-foreground'
-                    />
-                    <Button type="submit" className="rounded-full px-6">
-                        Search
-                    </Button>
+                <form ref={formRef} onSubmit={searchJobHandler} className='relative w-full max-w-xl mx-auto mt-8'>
+                    <div className='flex shadow-sm border border-border bg-card pl-4 rounded-full items-center gap-2'>
+                        <Search className='h-4 w-4 text-muted-foreground shrink-0' />
+                        <input
+                            type="text"
+                            placeholder='Job title, keyword, or company'
+                            value={query}
+                            onChange={(e) => { setQuery(e.target.value); setShowSuggestions(true); }}
+                            onFocus={() => setShowSuggestions(true)}
+                            className='outline-none border-none w-full bg-transparent py-3 text-sm placeholder:text-muted-foreground'
+                        />
+                        <Button type="submit" className="rounded-full px-6">
+                            Search
+                        </Button>
+                    </div>
+
+                    {
+                        showSuggestions && suggestions.length > 0 && (
+                            <div className='absolute z-20 top-full mt-2 w-full rounded-xl border border-border bg-card shadow-lg overflow-hidden text-left'>
+                                {suggestions.map((job) => (
+                                    <button
+                                        type="button"
+                                        key={job._id}
+                                        onClick={() => goToJob(job._id)}
+                                        className='flex w-full items-center gap-3 px-4 py-3 hover:bg-muted transition-colors border-b border-border last:border-0'
+                                    >
+                                        <span className='flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary'>
+                                            <Briefcase className='h-3.5 w-3.5' />
+                                        </span>
+                                        <div className='min-w-0 flex-1'>
+                                            <p className='text-sm font-medium truncate'>{job.title}</p>
+                                            <p className='text-xs text-muted-foreground flex items-center gap-1 truncate'>
+                                                {job.company?.name} <MapPin className='h-3 w-3 shrink-0' /> {job.location}
+                                            </p>
+                                        </div>
+                                    </button>
+                                ))}
+                                <button
+                                    type="submit"
+                                    className='flex w-full items-center gap-2 px-4 py-2.5 text-sm text-primary font-medium hover:bg-muted transition-colors'
+                                >
+                                    <Search className='h-3.5 w-3.5' /> See all results for "{query}"
+                                </button>
+                            </div>
+                        )
+                    }
                 </form>
 
                 <dl ref={statsRef} className='flex flex-wrap justify-center gap-x-10 gap-y-4 mt-14'>

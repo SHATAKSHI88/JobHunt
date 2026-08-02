@@ -5,6 +5,7 @@ import { Button } from './ui/button'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { FileX2, Video } from 'lucide-react'
+import EmptyState from './shared/EmptyState'
 import useGetMyInterviews from '@/hooks/useGetMyInterviews'
 
 const statusStyles = {
@@ -32,9 +33,12 @@ const AppliedJobTable = () => {
 
     if (allAppliedJobs.length <= 0) {
         return (
-            <div className='flex flex-col items-center justify-center text-center py-12 border border-dashed border-border rounded-lg'>
-                <FileX2 className='h-8 w-8 text-muted-foreground mb-2' />
-                <p className='text-sm text-muted-foreground'>You haven't applied to any jobs yet.</p>
+            <div className='border border-dashed border-border rounded-lg'>
+                <EmptyState
+                    variant="applications"
+                    title="You haven't applied to any jobs yet"
+                    description="Once you apply, you'll be able to track every status update here."
+                />
             </div>
         )
     }

@@ -82,7 +82,7 @@ const JobDescription = () => {
         <div>
             <Navbar />
             <PageTransition>
-            <div className='max-w-5xl mx-auto px-4 my-10'>
+            <div className='max-w-5xl mx-auto px-4 my-10 pb-24 sm:pb-10'>
                 <div className='bg-card border border-border rounded-lg p-6 sm:p-8'>
                     <div className='flex flex-col sm:flex-row sm:items-start justify-between gap-4'>
                         <div className='flex items-start gap-4'>
@@ -148,6 +148,32 @@ const JobDescription = () => {
                         </div>
                     )
                 }
+            </div>
+
+            {/* Sticky apply bar — mobile only, keeps the primary action reachable
+                without scrolling back up, matching real job-board mobile UX */}
+            <div className='sm:hidden fixed bottom-0 left-0 right-0 z-30 border-t border-border bg-background/95 backdrop-blur px-4 py-3 flex items-center gap-3'>
+                <div className='min-w-0 flex-1'>
+                    <p className='font-semibold text-sm truncate'>{singleJob?.title}</p>
+                    <p className='text-xs text-muted-foreground truncate'>{singleJob?.company?.name}</p>
+                </div>
+                <Button
+                    onClick={toggleSave}
+                    disabled={pending}
+                    variant="outline"
+                    size="icon"
+                    className={`shrink-0 ${isSaved ? 'text-primary border-primary/40' : ''}`}
+                    aria-label={isSaved ? "Remove from saved jobs" : "Save job"}
+                >
+                    {isSaved ? <BookmarkCheck className='h-4 w-4' /> : <Bookmark className='h-4 w-4' />}
+                </Button>
+                <Button
+                    onClick={isApplied ? undefined : applyJobHandler}
+                    disabled={isApplied}
+                    className={`shrink-0 rounded-lg ${isApplied ? 'bg-muted text-muted-foreground cursor-not-allowed hover:bg-muted' : 'bg-accent text-accent-foreground hover:bg-accent/90'}`}
+                >
+                    {isApplied ? "Applied" : "Apply now"}
+                </Button>
             </div>
         </PageTransition>
         </div>
