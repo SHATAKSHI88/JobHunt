@@ -4,7 +4,7 @@ import { Bookmark, BookmarkCheck, MapPin } from 'lucide-react'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
 import { Badge } from './ui/badge'
 import { useNavigate } from 'react-router-dom'
-import { jobTypeAccent, daysAgo, isRecent } from '@/lib/jobType'
+import { jobTypeAccent, daysAgo, isRecent, avatarColor } from '@/lib/jobType'
 import useSaveJob from '@/hooks/useSaveJob'
 
 const Job = ({ job }) => {
@@ -12,9 +12,16 @@ const Job = ({ job }) => {
     const { isSaved, toggleSave, pending } = useSaveJob(job?._id);
 
     return (
-        <div className={`group flex flex-col p-5 rounded-lg border border-l-4 ${jobTypeAccent(job?.jobType)} border-border bg-card shadow-sm hover:shadow-md transition-shadow`}>
+        <div className={`group flex flex-col p-5 rounded-lg border border-l-4 ${jobTypeAccent(job?.jobType)} border-border bg-card shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200`}>
             <div className='flex items-center justify-between'>
-                <p className='text-xs text-muted-foreground'>{daysAgo(job?.createdAt)}</p>
+                <div className='flex items-center gap-2'>
+                    <p className='text-xs text-muted-foreground'>{daysAgo(job?.createdAt)}</p>
+                    {
+                        isRecent(job?.createdAt) && (
+                            <Badge className="font-bold uppercase tracking-wide text-[10px] px-1.5 py-0 h-4 bg-accent text-accent-foreground hover:bg-accent">New</Badge>
+                        )
+                    }
+                </div>
                 <Button
                     variant="ghost"
                     className={`rounded-full h-8 w-8 ${isSaved ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
@@ -30,7 +37,9 @@ const Job = ({ job }) => {
             <div className='flex items-center gap-3 my-3'>
                 <Avatar className="h-11 w-11 rounded-md border border-border">
                     <AvatarImage src={job?.company?.logo} />
-                    <AvatarFallback className="rounded-md">{job?.company?.name?.[0]}</AvatarFallback>
+                    <AvatarFallback className={`rounded-md font-heading font-bold ${avatarColor(job?.company?.name)}`}>
+                        {job?.company?.name?.[0]}
+                    </AvatarFallback>
                 </Avatar>
                 <div>
                     <h2 className='font-semibold leading-tight'>{job?.company?.name}</h2>
@@ -49,11 +58,6 @@ const Job = ({ job }) => {
                 <Badge variant="secondary" className="font-medium">{job?.position} positions</Badge>
                 <Badge variant="secondary" className="font-medium">{job?.jobType}</Badge>
                 <Badge variant="secondary" className="font-medium">₹{job?.salary} LPA</Badge>
-                {
-                    isRecent(job?.createdAt) && (
-                        <Badge className="font-bold uppercase tracking-wide text-[10px] bg-accent text-accent-foreground hover:bg-accent">New</Badge>
-                    )
-                }
             </div>
 
             <div className='flex items-center gap-3 mt-4 pt-4 border-t border-border'>

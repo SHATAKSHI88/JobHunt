@@ -4,7 +4,7 @@ import { Button } from './ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
 import { Bookmark, BookmarkCheck } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { jobTypeAccent, isRecent } from '@/lib/jobType'
+import { jobTypeAccent, isRecent, avatarColor } from '@/lib/jobType'
 import useSaveJob from '@/hooks/useSaveJob'
 
 const LatestJobCards = ({ job }) => {
@@ -14,7 +14,7 @@ const LatestJobCards = ({ job }) => {
     return (
         <div
             onClick={() => navigate(`/description/${job._id}`)}
-            className={`group relative flex flex-col p-5 rounded-lg border border-l-4 ${jobTypeAccent(job?.jobType)} border-border bg-card shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
+            className={`group relative flex flex-col p-5 rounded-lg border border-l-4 ${jobTypeAccent(job?.jobType)} border-border bg-card shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer`}
         >
             <Button
                 variant="ghost"
@@ -29,7 +29,9 @@ const LatestJobCards = ({ job }) => {
             <div className='flex items-center gap-3'>
                 <Avatar className="h-10 w-10 rounded-md border border-border">
                     <AvatarImage src={job?.company?.logo} />
-                    <AvatarFallback className="rounded-md">{job?.company?.name?.[0]}</AvatarFallback>
+                    <AvatarFallback className={`rounded-md font-heading font-bold ${avatarColor(job?.company?.name)}`}>
+                        {job?.company?.name?.[0]}
+                    </AvatarFallback>
                 </Avatar>
                 <div>
                     <h2 className='font-semibold text-sm leading-tight'>{job?.company?.name}</h2>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { RadioGroup, RadioGroupItem } from './ui/radio-group'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
@@ -6,9 +6,10 @@ import { Button } from './ui/button'
 import { useDispatch, useSelector } from 'react-redux'
 import { setFilters, resetFilters } from '@/redux/jobSlice'
 import useGetFilterOptions from '@/hooks/useGetFilterOptions'
-import { SlidersHorizontal, X } from 'lucide-react'
+import { SlidersHorizontal, X, Search, ChevronDown } from 'lucide-react'
 
 const ALL = "__all__";
+const VISIBLE_COUNT = 6;
 
 const FilterCard = () => {
     useGetFilterOptions();
@@ -18,6 +19,8 @@ const FilterCard = () => {
 
     const [minSalary, setMinSalary] = useState(filters.minSalary);
     const [maxSalary, setMaxSalary] = useState(filters.maxSalary);
+    const [locationSearch, setLocationSearch] = useState("");
+    const [showAllLocations, setShowAllLocations] = useState(false);
 
     // keep local salary inputs in sync if filters get cleared elsewhere
     useEffect(() => {
@@ -34,8 +37,18 @@ const FilterCard = () => {
     const clearAll = () => {
         setMinSalary("");
         setMaxSalary("");
+        setLocationSearch("");
         dispatch(resetFilters());
     }
+
+    // filter by search text, then cap how many render unless "show all" is on —
+    // avoids a long, messy, unbounded list dominating the sidebar
+    const filteredLocations = useMemo(
+        () => locations.filter((loc) => loc.toLowerCase().includes(locationSearch.toLowerCase())),
+        [locations, locationSearch]
+    );
+    const visibleLocations = showAllLocations ? filteredLocations : filteredLocations.slice(0, VISIBLE_COUNT);
+    const hiddenCount = filteredLocations.length - visibleLocations.length;
 
     return (
         <div className='w-full bg-card border border-border rounded-lg p-4 sticky top-20'>
@@ -58,22 +71,65 @@ const FilterCard = () => {
                     locations.length === 0 ? (
                         <p className='text-xs text-muted-foreground'>No locations yet.</p>
                     ) : (
-                        <RadioGroup
-                            value={filters.location || ALL}
-                            onValueChange={(value) => dispatch(setFilters({ location: value === ALL ? "" : value }))}
-                            className="flex flex-col gap-2.5"
-                        >
-                            <div className='flex items-center space-x-2'>
-                                <RadioGroupItem value={ALL} id="loc-all" />
-                                <Label htmlFor="loc-all" className="text-sm font-normal cursor-pointer">All locations</Label>
-                            </div>
-                            {locations.map((loc) => (
-                                <div className='flex items-center space-x-2' key={loc}>
-                                    <RadioGroupItem value={loc} id={`loc-${loc}`} />
-                                    <Label htmlFor={`loc-${loc}`} className="text-sm font-normal cursor-pointer">{loc}</Label>
-                                </div>
-                            ))}
-                        </RadioGroup>
+                        <>
+                            {
+                                locations.length > VISIBLE_COUNT && (
+                                    <div className='relative mb-2.5'>
+                                        <Search className='absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground' />
+                                        <Input
+                                            value={locationSearch}
+                                            onChange={(e) => setLocationSearch(e.target.value)}
+                                            placeholder="Search locations"
+                                            className="h-8 pl-8 text-sm"
+                                        />
+                                    </div>
+                                )
+                            }
+                            <RadioGroup
+                                value={filters.location || ALL}
+                                onValueChange={(value) => dispatch(setFilters({ location: value === ALL ? "" : value }))}
+                                className="flex flex-col gap-2.5 max-h-64 overflow-y-auto scroll-thin pr-1"
+                            >
+                                {
+                                    !locationSearch && (
+                                        <div className='flex items-center space-x-2'>
+                                            <RadioGroupItem value={ALL} id="loc-all" />
+                                            <Label htmlFor="loc-all" className="text-sm font-normal cursor-pointer">All locations</Label>
+                                        </div>
+                                    )
+                                }
+                                {
+                                    visibleLocations.length === 0 ? (
+                                        <p className='text-xs text-muted-foreground py-1'>No matches.</p>
+                                    ) : visibleLocations.map((loc) => (
+                                        <div className='flex items-center space-x-2' key={loc}>
+                                            <RadioGroupItem value={loc} id={`loc-${loc}`} />
+                                            <Label htmlFor={`loc-${loc}`} className="text-sm font-normal cursor-pointer truncate">{loc}</Label>
+                                        </div>
+                                    ))
+                                }
+                            </RadioGroup>
+                            {
+                                hiddenCount > 0 && (
+                                    <button
+                                        onClick={() => setShowAllLocations(true)}
+                                        className='flex items-center gap-1 text-xs text-primary font-medium mt-2 hover:underline'
+                                    >
+                                        <ChevronDown className='h-3 w-3' /> Show {hiddenCount} more
+                                    </button>
+                                )
+                            }
+                            {
+                                showAllLocations && filteredLocations.length > VISIBLE_COUNT && (
+                                    <button
+                                        onClick={() => setShowAllLocations(false)}
+                                        className='text-xs text-muted-foreground mt-2 hover:underline'
+                                    >
+                                        Show less
+                                    </button>
+                                )
+                            }
+                        </>
                     )
                 }
             </div>
