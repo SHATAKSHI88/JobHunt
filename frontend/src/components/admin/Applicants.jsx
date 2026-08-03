@@ -7,7 +7,9 @@ import { APPLICATION_API_END_POINT } from '@/utils/constant';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAllApplicants } from '@/redux/applicationSlice';
-import { LayoutGrid, List } from 'lucide-react';
+import { LayoutGrid, List, Download } from 'lucide-react';
+import { downloadCSV } from '@/lib/csvExport';
+import { Button } from '../ui/button';
 
 const Applicants = () => {
     const params = useParams();
@@ -27,6 +29,19 @@ const Applicants = () => {
         fetchAllApplicants();
     }, []);
 
+    const exportHandler = () => {
+        const rows = (applicants?.applications || []).map((item) => ({
+            "Full name": item?.applicant?.fullname || "",
+            "Email": item?.applicant?.email || "",
+            "Phone": item?.applicant?.phoneNumber || "",
+            "Status": item.status,
+            "Match score": item.matchScore ?? "",
+            "Applied on": item?.applicant?.createdAt?.split("T")[0] || "",
+            "Resume": item?.applicant?.profile?.resume || "",
+        }));
+        downloadCSV(`${applicants?.title || "applicants"}-${new Date().toISOString().split("T")[0]}`, rows);
+    }
+
     return (
         <div>
             <Navbar />
@@ -36,19 +51,29 @@ const Applicants = () => {
                         <h1 className='font-heading font-extrabold text-2xl'>Applicants</h1>
                         <p className='text-muted-foreground text-sm mt-1'>{applicants?.applications?.length ?? 0} people have applied for {applicants?.title || "this role"}.</p>
                     </div>
-                    <div className='inline-flex rounded-md border border-border p-0.5 bg-muted/40'>
-                        <button
-                            onClick={() => setView('board')}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium transition-colors ${view === 'board' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                    <div className='flex items-center gap-2'>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={exportHandler}
+                            disabled={!applicants?.applications?.length}
                         >
-                            <LayoutGrid className='h-3.5 w-3.5' /> Board
-                        </button>
-                        <button
-                            onClick={() => setView('table')}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium transition-colors ${view === 'table' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                        >
-                            <List className='h-3.5 w-3.5' /> Table
-                        </button>
+                            <Download className='h-3.5 w-3.5 mr-1.5' /> Export CSV
+                        </Button>
+                        <div className='inline-flex rounded-md border border-border p-0.5 bg-muted/40'>
+                            <button
+                                onClick={() => setView('board')}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium transition-colors ${view === 'board' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                            >
+                                <LayoutGrid className='h-3.5 w-3.5' /> Board
+                            </button>
+                            <button
+                                onClick={() => setView('table')}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium transition-colors ${view === 'table' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                            >
+                                <List className='h-3.5 w-3.5' /> Table
+                            </button>
+                        </div>
                     </div>
                 </div>
 

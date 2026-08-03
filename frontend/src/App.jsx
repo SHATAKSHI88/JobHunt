@@ -10,6 +10,7 @@ import Browse from './components/Browse'
 import SavedJobs from './components/SavedJobs'
 import Profile from './components/Profile'
 import JobDescription from './components/JobDescription'
+import CompanyProfile from './components/CompanyProfile'
 import ApplyJobForm from './components/ApplyJobForm'
 import Companies from './components/admin/Companies'
 import CompanyCreate from './components/admin/CompanyCreate'
@@ -53,6 +54,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/description/:id",
     element: <JobDescription />
+  },
+  {
+    path: "/companies/:id",
+    element: <CompanyProfile />
   },
   {
     path: "/jobs/:id/apply",

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import Navbar from './shared/Navbar'
 import HeroSection from './HeroSection'
+import RecentlyViewed from './RecentlyViewed'
 import TrustedBy from './TrustedBy'
 import CategoryCarousel from './CategoryCarousel'
 import LatestJobs from './LatestJobs'
@@ -26,6 +27,7 @@ const Home = () => {
       <Navbar />
       <PageTransition>
         <HeroSection />
+        <RecentlyViewed />
         <TrustedBy />
         <CategoryCarousel />
         <LatestJobs />
