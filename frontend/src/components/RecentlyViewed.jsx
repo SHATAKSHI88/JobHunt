@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { getRecentlyViewed } from '@/lib/recentlyViewed'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
 import { avatarColor, jobTypeAccent } from '@/lib/jobType'
@@ -8,12 +9,25 @@ import { History } from 'lucide-react'
 const RecentlyViewed = () => {
     const [jobs, setJobs] = useState([]);
     const navigate = useNavigate();
+    const { user } = useSelector(store => store.auth);
 
-    // re-read on mount so it reflects whatever's been viewed this session,
-    // including jobs viewed after this component last rendered
+    // Re-read on mount, whenever the logged-in user changes (so switching
+    // accounts on the same device never shows a different user's history),
+    // and again whenever the tab regains focus or another tab updates
+    // localStorage — otherwise an already-open homepage tab would keep
+    // showing a stale snapshot from whenever it first loaded.
     useEffect(() => {
-        setJobs(getRecentlyViewed());
-    }, []);
+        const refresh = () => setJobs(getRecentlyViewed(user?._id));
+        refresh();
+        window.addEventListener("focus", refresh);
+        window.addEventListener("storage", refresh);
+        document.addEventListener("visibilitychange", refresh);
+        return () => {
+            window.removeEventListener("focus", refresh);
+            window.removeEventListener("storage", refresh);
+            document.removeEventListener("visibilitychange", refresh);
+        };
+    }, [user?._id]);
 
     if (jobs.length === 0) return null;
 
