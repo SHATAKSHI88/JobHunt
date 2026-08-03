@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Button } from '../ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar'
-import { LogOut, User2, Briefcase, Bookmark, Menu, X, Search } from 'lucide-react'
+import { LogOut, User2, Briefcase, Bookmark, Menu, X, Search, Bell } from 'lucide-react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
@@ -133,6 +133,10 @@ const Navbar = () => {
                                                             <Bookmark className='h-4 w-4' />
                                                             Saved Jobs
                                                         </Link>
+                                                        <Link to="/alerts" className='flex items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted transition-colors'>
+                                                            <Bell className='h-4 w-4' />
+                                                            Job Alerts
+                                                        </Link>
                                                     </>
                                                 )
                                             }
@@ -212,6 +216,9 @@ const Navbar = () => {
                                                     </NavLink>
                                                     <NavLink to="/saved-jobs" className={mobileNavLinkClass} onClick={() => setMobileOpen(false)}>
                                                         <span className='flex items-center gap-2'><Bookmark className='h-4 w-4' /> Saved Jobs</span>
+                                                    </NavLink>
+                                                    <NavLink to="/alerts" className={mobileNavLinkClass} onClick={() => setMobileOpen(false)}>
+                                                        <span className='flex items-center gap-2'><Bell className='h-4 w-4' /> Job Alerts</span>
                                                     </NavLink>
                                                 </>
                                             )

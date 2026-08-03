@@ -5,6 +5,7 @@ import ApiError from "../utils/ApiError.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/datauri.js";
 import { extractTextFromBuffer } from "../utils/pdfText.js";
+import { notifyMatchingAlerts } from "./jobAlert.controller.js";
 
 // recruiter posts a job
 export const postJob = asyncHandler(async (req, res) => {
@@ -78,6 +79,11 @@ export const postJob = asyncHandler(async (req, res) => {
         jdOriginalName,
         jdText,
     });
+
+    // Fire-and-forget: check saved job alerts for matches and email
+    // subscribers. Never awaited — a slow/failed email run should never
+    // delay the recruiter's "job posted" response.
+    notifyMatchingAlerts(job);
 
     return res.status(201).json({
         message: "New job created successfully.",

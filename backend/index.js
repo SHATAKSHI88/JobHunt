@@ -9,6 +9,7 @@ import jobRoute from "./routes/job.route.js";
 import applicationRoute from "./routes/application.route.js";
 import analyticsRoute from "./routes/analytics.route.js";
 import interviewRoute from "./routes/interview.route.js";
+import jobAlertRoute from "./routes/jobAlert.route.js";
 
 dotenv.config({});
 
@@ -35,6 +36,7 @@ app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/analytics", analyticsRoute);
 app.use("/api/v1/interview", interviewRoute);
+app.use("/api/v1/alerts", jobAlertRoute);
 
 // 404 handler for unknown routes
 app.use((req, res) => {
