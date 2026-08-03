@@ -1,18 +1,43 @@
 import React from 'react'
 import { Button } from './ui/button'
-import { Bookmark, BookmarkCheck, MapPin } from 'lucide-react'
+import { Bookmark, BookmarkCheck, MapPin, GitCompare } from 'lucide-react'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
 import { Badge } from './ui/badge'
 import { useNavigate, Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import { jobTypeAccent, daysAgo, isRecent, avatarColor } from '@/lib/jobType'
 import useSaveJob from '@/hooks/useSaveJob'
+import { toggleCompare, MAX_COMPARE_ITEMS } from '@/redux/compareSlice'
+import { toast } from 'sonner'
 
 const Job = ({ job }) => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const { isSaved, toggleSave, pending } = useSaveJob(job?._id);
+    const { items: compareItems } = useSelector(store => store.compare);
+    const isComparing = compareItems.some((j) => j._id === job?._id);
+
+    const compareHandler = () => {
+        if (!isComparing && compareItems.length >= MAX_COMPARE_ITEMS) {
+            toast.info(`You can compare up to ${MAX_COMPARE_ITEMS} jobs at a time.`);
+            return;
+        }
+        dispatch(toggleCompare({
+            _id: job._id,
+            title: job.title,
+            location: job.location,
+            jobType: job.jobType,
+            salary: job.salary,
+            position: job.position,
+            experienceLevel: job.experienceLevel,
+            requirements: job.requirements,
+            createdAt: job.createdAt,
+            company: { _id: job.company?._id, name: job.company?.name, logo: job.company?.logo },
+        }));
+    }
 
     return (
-        <div className={`group flex flex-col p-5 rounded-lg border border-l-4 ${jobTypeAccent(job?.jobType)} border-border bg-card shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200`}>
+        <div className={`group flex flex-col p-5 rounded-lg border border-l-4 ${jobTypeAccent(job?.jobType)} ${isComparing ? 'border-primary ring-1 ring-primary/30' : 'border-border'} bg-card shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200`}>
             <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-2'>
                     <p className='text-xs text-muted-foreground'>{daysAgo(job?.createdAt)}</p>
@@ -22,16 +47,27 @@ const Job = ({ job }) => {
                         )
                     }
                 </div>
-                <Button
-                    variant="ghost"
-                    className={`rounded-full h-8 w-8 ${isSaved ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
-                    size="icon"
-                    aria-label={isSaved ? "Remove from saved jobs" : "Save job"}
-                    onClick={toggleSave}
-                    disabled={pending}
-                >
-                    {isSaved ? <BookmarkCheck className='h-4 w-4' /> : <Bookmark className='h-4 w-4' />}
-                </Button>
+                <div className='flex items-center gap-1'>
+                    <Button
+                        variant="ghost"
+                        className={`rounded-full h-8 w-8 ${isComparing ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-primary'}`}
+                        size="icon"
+                        aria-label={isComparing ? "Remove from comparison" : "Add to comparison"}
+                        onClick={compareHandler}
+                    >
+                        <GitCompare className='h-4 w-4' />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        className={`rounded-full h-8 w-8 ${isSaved ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
+                        size="icon"
+                        aria-label={isSaved ? "Remove from saved jobs" : "Save job"}
+                        onClick={toggleSave}
+                        disabled={pending}
+                    >
+                        {isSaved ? <BookmarkCheck className='h-4 w-4' /> : <Bookmark className='h-4 w-4' />}
+                    </Button>
+                </div>
             </div>
 
             <div className='flex items-center gap-3 my-3'>

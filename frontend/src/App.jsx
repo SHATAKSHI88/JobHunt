@@ -12,6 +12,7 @@ import Profile from './components/Profile'
 import JobDescription from './components/JobDescription'
 import CompanyProfile from './components/CompanyProfile'
 import Alerts from './components/Alerts'
+import CompareJobs from './components/CompareJobs'
 import ApplyJobForm from './components/ApplyJobForm'
 import Companies from './components/admin/Companies'
 import CompanyCreate from './components/admin/CompanyCreate'
@@ -63,6 +64,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/alerts",
     element: <Alerts />
+  },
+  {
+    path: "/compare",
+    element: <CompareJobs />
   },
   {
     path: "/jobs/:id/apply",

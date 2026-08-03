@@ -12,6 +12,7 @@ import { toast } from 'sonner'
 import ThemeToggle from './ThemeToggle'
 import CommandPalette from './CommandPalette'
 import RouteProgressBar from './RouteProgressBar'
+import CompareBar from './CompareBar'
 
 const navLinkClass = ({ isActive }) =>
     `relative py-1 transition-colors hover:text-foreground ${
@@ -235,6 +236,7 @@ const Navbar = () => {
                 )
             }
             <CommandPalette />
+            <CompareBar />
         </header>
     )
 }
