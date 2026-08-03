@@ -3,7 +3,7 @@ import { Button } from './ui/button'
 import { Bookmark, BookmarkCheck, MapPin } from 'lucide-react'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
 import { Badge } from './ui/badge'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { jobTypeAccent, daysAgo, isRecent, avatarColor } from '@/lib/jobType'
 import useSaveJob from '@/hooks/useSaveJob'
 
@@ -42,7 +42,15 @@ const Job = ({ job }) => {
                     </AvatarFallback>
                 </Avatar>
                 <div>
-                    <h2 className='font-semibold leading-tight'>{job?.company?.name}</h2>
+                    <h2 className='font-semibold leading-tight'>
+                        <Link
+                            to={`/companies/${job?.company?._id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className='hover:text-primary hover:underline transition-colors'
+                        >
+                            {job?.company?.name}
+                        </Link>
+                    </h2>
                     <p className='text-xs text-muted-foreground flex items-center gap-1 mt-0.5'>
                         <MapPin className='h-3 w-3' /> {job?.location || "India"}
                     </p>

@@ -5,7 +5,7 @@ import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
 import { MapPin, Briefcase, Wallet, GraduationCap, Users, CalendarDays, CheckCircle2, Bookmark, BookmarkCheck } from 'lucide-react'
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { JOB_API_END_POINT } from '@/utils/constant';
 import { setSingleJob } from '@/redux/jobSlice';
@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import useSaveJob from '@/hooks/useSaveJob';
 import Job from './Job';
 import { Sparkles } from 'lucide-react';
+import { avatarColor } from '@/lib/jobType';
 
 const infoRow = (Icon, label, value) => (
     <div className='flex items-start gap-3'>
@@ -88,11 +89,15 @@ const JobDescription = () => {
                         <div className='flex items-start gap-4'>
                             <Avatar className="h-14 w-14 rounded-md border border-border shrink-0">
                                 <AvatarImage src={singleJob?.company?.logo} />
-                                <AvatarFallback className="rounded-md">{singleJob?.company?.name?.[0]}</AvatarFallback>
+                                <AvatarFallback className={`rounded-md font-heading font-bold ${avatarColor(singleJob?.company?.name)}`}>{singleJob?.company?.name?.[0]}</AvatarFallback>
                             </Avatar>
                             <div>
                                 <h1 className='font-heading font-extrabold text-xl sm:text-2xl leading-tight'>{singleJob?.title}</h1>
-                                <p className='text-muted-foreground text-sm mt-1'>{singleJob?.company?.name} · {singleJob?.location}</p>
+                                <p className='text-muted-foreground text-sm mt-1'>
+                                    <Link to={`/companies/${singleJob?.company?._id}`} className='hover:text-primary hover:underline transition-colors'>
+                                        {singleJob?.company?.name}
+                                    </Link> · {singleJob?.location}
+                                </p>
                                 <div className='flex items-center flex-wrap gap-1.5 mt-3'>
                                     <Badge variant="secondary">{singleJob?.position} positions</Badge>
                                     <Badge variant="secondary">{singleJob?.jobType}</Badge>

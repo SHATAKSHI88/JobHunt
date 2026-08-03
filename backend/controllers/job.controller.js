@@ -89,7 +89,7 @@ export const postJob = asyncHandler(async (req, res) => {
 // student-facing job listing: search + filters + pagination
 export const getAllJobs = asyncHandler(async (req, res) => {
     const keyword = req.query.keyword || "";
-    const { location, jobType, minSalary, maxSalary } = req.query;
+    const { location, jobType, minSalary, maxSalary, company } = req.query;
 
     const page = Math.max(Number(req.query.page) || 1, 1);
     const limit = Math.max(Number(req.query.limit) || 9, 1);
@@ -113,6 +113,7 @@ export const getAllJobs = asyncHandler(async (req, res) => {
 
     if (location) query.location = { $regex: `^${location}$`, $options: "i" };
     if (jobType) query.jobType = { $regex: `^${jobType}$`, $options: "i" };
+    if (company) query.company = company;
     if (minSalary || maxSalary) {
         query.salary = {};
         if (minSalary) query.salary.$gte = Number(minSalary);

@@ -3,7 +3,7 @@ import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
 import { Bookmark, BookmarkCheck } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { jobTypeAccent, isRecent, avatarColor } from '@/lib/jobType'
 import useSaveJob from '@/hooks/useSaveJob'
 
@@ -34,7 +34,15 @@ const LatestJobCards = ({ job }) => {
                     </AvatarFallback>
                 </Avatar>
                 <div>
-                    <h2 className='font-semibold text-sm leading-tight'>{job?.company?.name}</h2>
+                    <h2 className='font-semibold text-sm leading-tight'>
+                        <Link
+                            to={`/companies/${job?.company?._id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className='hover:text-primary hover:underline transition-colors'
+                        >
+                            {job?.company?.name}
+                        </Link>
+                    </h2>
                     <p className='text-xs text-muted-foreground'>{job?.location || "India"}</p>
                 </div>
             </div>
