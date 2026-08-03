@@ -3,7 +3,7 @@
 // https://ai.google.dev/api/generate-content
 
 const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
-const MODEL = "gemini-2.0-flash";
+const MODEL = "gemini-flash-latest";
 
 /**
  * @param {{ resumeText: string, jobDescription: string, requirements?: string[] }} params
