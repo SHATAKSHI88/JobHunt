@@ -10,9 +10,13 @@ import { motion } from 'framer-motion';
 import { SearchX } from 'lucide-react';
 import EmptyState from './shared/EmptyState';
 import useGetAllJobs from '@/hooks/useGetAllJobs';
+import CreateAlertDialog from './CreateAlertDialog';
+import { Button } from './ui/button';
+import { BellPlus } from 'lucide-react';
 
 const Jobs = () => {
     const [page, setPage] = useState(1);
+    const [alertOpen, setAlertOpen] = useState(false);
     const { allJobs, isLoading, pagination, searchedQuery, filters } = useSelector(store => store.job);
 
     useGetAllJobs(page);
@@ -38,9 +42,14 @@ const Jobs = () => {
                     </aside>
 
                     <div className='flex-1 min-w-0'>
-                        <p className='text-sm text-muted-foreground mb-4'>
-                            {isLoading ? "Searching…" : `${pagination.totalJobs} job${pagination.totalJobs === 1 ? "" : "s"} found`}
-                        </p>
+                        <div className='flex items-center justify-between mb-4 gap-3'>
+                            <p className='text-sm text-muted-foreground'>
+                                {isLoading ? "Searching…" : `${pagination.totalJobs} job${pagination.totalJobs === 1 ? "" : "s"} found`}
+                            </p>
+                            <Button variant="outline" size="sm" onClick={() => setAlertOpen(true)}>
+                                <BellPlus className='h-3.5 w-3.5 mr-1.5' /> Create alert
+                            </Button>
+                        </div>
 
                         {
                             isLoading ? (
@@ -90,6 +99,11 @@ const Jobs = () => {
                 </div>
             </div>
         </PageTransition>
+        <CreateAlertDialog
+            open={alertOpen}
+            setOpen={setAlertOpen}
+            criteria={{ keyword: searchedQuery, location: filters.location, jobType: filters.jobType }}
+        />
         </div>
     )
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Button } from '../ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar'
-import { LogOut, User2, Briefcase, Bookmark, Menu, X, Search } from 'lucide-react'
+import { LogOut, User2, Briefcase, Bookmark, Menu, X, Search, Bell } from 'lucide-react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
@@ -12,6 +12,7 @@ import { toast } from 'sonner'
 import ThemeToggle from './ThemeToggle'
 import CommandPalette from './CommandPalette'
 import RouteProgressBar from './RouteProgressBar'
+import CompareBar from './CompareBar'
 
 const navLinkClass = ({ isActive }) =>
     `relative py-1 transition-colors hover:text-foreground ${
@@ -133,6 +134,10 @@ const Navbar = () => {
                                                             <Bookmark className='h-4 w-4' />
                                                             Saved Jobs
                                                         </Link>
+                                                        <Link to="/alerts" className='flex items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-muted transition-colors'>
+                                                            <Bell className='h-4 w-4' />
+                                                            Job Alerts
+                                                        </Link>
                                                     </>
                                                 )
                                             }
@@ -213,6 +218,9 @@ const Navbar = () => {
                                                     <NavLink to="/saved-jobs" className={mobileNavLinkClass} onClick={() => setMobileOpen(false)}>
                                                         <span className='flex items-center gap-2'><Bookmark className='h-4 w-4' /> Saved Jobs</span>
                                                     </NavLink>
+                                                    <NavLink to="/alerts" className={mobileNavLinkClass} onClick={() => setMobileOpen(false)}>
+                                                        <span className='flex items-center gap-2'><Bell className='h-4 w-4' /> Job Alerts</span>
+                                                    </NavLink>
                                                 </>
                                             )
                                         }
@@ -228,6 +236,7 @@ const Navbar = () => {
                 )
             }
             <CommandPalette />
+            <CompareBar />
         </header>
     )
 }

@@ -15,6 +15,7 @@ import storage from 'redux-persist/lib/storage'
 import companySlice from "./companySlice";
 import applicationSlice from "./applicationSlice";
 import interviewSlice from "./interviewSlice";
+import compareSlice from "./compareSlice";
 
 const persistConfig = {
     key: 'root',
@@ -32,7 +33,8 @@ const rootReducer = combineReducers({
     job:jobSlice,
     company:companySlice,
     application:applicationSlice,
-    interview:interviewSlice
+    interview:interviewSlice,
+    compare:compareSlice
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

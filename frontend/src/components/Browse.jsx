@@ -9,9 +9,13 @@ import { setSearchedQuery } from '@/redux/jobSlice';
 import useGetAllJobs from '@/hooks/useGetAllJobs';
 import { SearchX } from 'lucide-react';
 import EmptyState from './shared/EmptyState';
+import CreateAlertDialog from './CreateAlertDialog';
+import { Button } from './ui/button';
+import { BellPlus } from 'lucide-react';
 
 const Browse = () => {
     const [page, setPage] = useState(1);
+    const [alertOpen, setAlertOpen] = useState(false);
     const { allJobs, searchedQuery, isLoading, pagination } = useSelector(store => store.job);
     const dispatch = useDispatch();
 
@@ -37,11 +41,16 @@ const Browse = () => {
             <Navbar />
             <PageTransition>
             <div className='max-w-7xl mx-auto px-4 my-10'>
-                <div className='mb-8'>
-                    <h1 className='font-heading font-extrabold text-2xl'>
-                        {searchedQuery ? `Results for "${searchedQuery}"` : "Search results"}
-                    </h1>
-                    <p className='text-muted-foreground text-sm mt-1'>{isLoading ? "Searching…" : `${pagination.totalJobs} job${pagination.totalJobs === 1 ? "" : "s"} found`}</p>
+                <div className='flex items-start justify-between gap-3 mb-8'>
+                    <div>
+                        <h1 className='font-heading font-extrabold text-2xl'>
+                            {searchedQuery ? `Results for "${searchedQuery}"` : "Search results"}
+                        </h1>
+                        <p className='text-muted-foreground text-sm mt-1'>{isLoading ? "Searching…" : `${pagination.totalJobs} job${pagination.totalJobs === 1 ? "" : "s"} found`}</p>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={() => setAlertOpen(true)} className="shrink-0">
+                        <BellPlus className='h-3.5 w-3.5 mr-1.5' /> Create alert
+                    </Button>
                 </div>
 
                 {
@@ -79,6 +88,11 @@ const Browse = () => {
                 }
             </div>
         </PageTransition>
+        <CreateAlertDialog
+            open={alertOpen}
+            setOpen={setAlertOpen}
+            criteria={{ keyword: searchedQuery, location: "", jobType: "" }}
+        />
         </div>
     )
 }
