@@ -15,6 +15,7 @@ import useSaveJob from '@/hooks/useSaveJob';
 import Job from './Job';
 import { Sparkles } from 'lucide-react';
 import { avatarColor } from '@/lib/jobType';
+import { recordRecentlyViewed } from '@/lib/recentlyViewed';
 
 const infoRow = (Icon, label, value) => (
     <div className='flex items-start gap-3'>
@@ -57,6 +58,7 @@ const JobDescription = () => {
                 if (res.data.success) {
                     dispatch(setSingleJob(res.data.job));
                     setIsApplied(res.data.job.applications.some(application => application.applicant === user?._id))
+                    recordRecentlyViewed(res.data.job);
                 }
             } catch (error) {
                 console.log(error);
