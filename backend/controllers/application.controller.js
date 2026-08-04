@@ -185,7 +185,12 @@ export const updateStatus = asyncHandler(async (req, res) => {
     }
 
     application.status = status.toLowerCase();
-    await application.save();
+    // Only validate the field(s) actually being changed here (status) —
+    // not the whole document. Without this, older applications created
+    // before newer required fields (gender, nationality, etc.) existed
+    // would fail validation on every status update, even though we're
+    // not touching those fields at all.
+    await application.save({ validateModifiedOnly: true });
 
     sendEmail({
         to: application.applicant?.email,
@@ -256,7 +261,7 @@ export const generateApplicantAnalysis = asyncHandler(async (req, res) => {
         overallSummary,
         generatedAt: new Date(),
     };
-    await application.save();
+    await application.save({ validateModifiedOnly: true });
 
     return res.status(200).json({
         message: "Analysis generated.",
