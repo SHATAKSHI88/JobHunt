@@ -130,7 +130,7 @@ const ApplicantsTable = () => {
         <>
         {
             selectedIds.length > 0 && (
-                <div className='sticky top-16 z-20 mb-3 flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2.5'>
+                <div className='mb-3 flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2.5'>
                     <p className='text-sm font-medium'>{selectedIds.length} selected</p>
                     <div className='flex items-center gap-2'>
                         <Button size="sm" variant="ghost" onClick={() => setSelectedIds([])} disabled={bulkLoading}>
