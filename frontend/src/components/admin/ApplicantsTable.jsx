@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { MoreHorizontal, Users, Video, XCircle, Sparkles } from 'lucide-react';
+import { MoreHorizontal, Users, Video, XCircle, Sparkles, CheckCheck, X as XIcon } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -67,6 +67,46 @@ const ApplicantsTable = () => {
         }
     }
 
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [bulkLoading, setBulkLoading] = useState(false);
+
+    const toggleOne = (id) => {
+        setSelectedIds((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+    }
+    const allIds = (applicants?.applications || []).map((a) => a._id);
+    const allSelected = allIds.length > 0 && selectedIds.length === allIds.length;
+    const toggleAll = () => {
+        setSelectedIds(allSelected ? [] : allIds);
+    }
+
+    const bulkStatusHandler = async (status) => {
+        if (selectedIds.length === 0) return;
+        setBulkLoading(true);
+        try {
+            axios.defaults.withCredentials = true;
+            const results = await Promise.allSettled(
+                selectedIds.map((id) => axios.post(`${APPLICATION_API_END_POINT}/status/${id}/update`, { status }))
+            );
+            const succeededIds = selectedIds.filter((_, i) => results[i].status === "fulfilled");
+            const failCount = results.length - succeededIds.length;
+
+            const updatedApplications = applicants.applications.map((app) =>
+                succeededIds.includes(app._id) ? { ...app, status: status.toLowerCase() } : app
+            );
+            dispatch(setAllApplicants({ ...applicants, applications: updatedApplications }));
+
+            if (succeededIds.length > 0) {
+                toast.success(`${succeededIds.length} applicant${succeededIds.length === 1 ? "" : "s"} marked ${status.toLowerCase()}.`);
+            }
+            if (failCount > 0) {
+                toast.error(`${failCount} update${failCount === 1 ? "" : "s"} failed.`);
+            }
+            setSelectedIds([]);
+        } finally {
+            setBulkLoading(false);
+        }
+    }
+
     const matchBadge = (score) => {
         if (score === null || score === undefined) return null;
         const style = score >= 75
@@ -87,10 +127,38 @@ const ApplicantsTable = () => {
     }
 
     return (
+        <>
+        {
+            selectedIds.length > 0 && (
+                <div className='sticky top-16 z-20 mb-3 flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2.5'>
+                    <p className='text-sm font-medium'>{selectedIds.length} selected</p>
+                    <div className='flex items-center gap-2'>
+                        <Button size="sm" variant="ghost" onClick={() => setSelectedIds([])} disabled={bulkLoading}>
+                            <XIcon className='h-3.5 w-3.5 mr-1' /> Clear
+                        </Button>
+                        <Button size="sm" variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10" onClick={() => bulkStatusHandler("Rejected")} disabled={bulkLoading}>
+                            Reject
+                        </Button>
+                        <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => bulkStatusHandler("Accepted")} disabled={bulkLoading}>
+                            <CheckCheck className='h-3.5 w-3.5 mr-1' /> Accept
+                        </Button>
+                    </div>
+                </div>
+            )
+        }
         <Table>
             <TableCaption>A list of everyone who's applied</TableCaption>
             <TableHeader>
                 <TableRow>
+                    <TableHead className="w-10">
+                        <input
+                            type="checkbox"
+                            checked={allSelected}
+                            onChange={toggleAll}
+                            className="h-4 w-4 rounded border-border accent-primary cursor-pointer"
+                            aria-label="Select all applicants"
+                        />
+                    </TableHead>
                     <TableHead>Full name</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Contact</TableHead>
@@ -106,7 +174,16 @@ const ApplicantsTable = () => {
             <TableBody>
                 {
                     applicants.applications.map((item) => (
-                        <TableRow key={item._id}>
+                        <TableRow key={item._id} className={selectedIds.includes(item._id) ? "bg-primary/5" : ""}>
+                            <TableCell>
+                                <input
+                                    type="checkbox"
+                                    checked={selectedIds.includes(item._id)}
+                                    onChange={() => toggleOne(item._id)}
+                                    className="h-4 w-4 rounded border-border accent-primary cursor-pointer"
+                                    aria-label={`Select ${item?.applicant?.fullname}`}
+                                />
+                            </TableCell>
                             <TableCell className="font-medium">
                                 <button className="hover:text-primary hover:underline text-left" onClick={() => navigate(`/admin/applicants/${item._id}`)}>
                                     {item?.applicant?.fullname}
@@ -236,6 +313,7 @@ const ApplicantsTable = () => {
                 }
             </TableBody>
         </Table>
+        </>
     )
 }
 

@@ -3,6 +3,7 @@ import { User } from "../models/user.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import sendEmail from "../utils/sendEmail.js";
+import { createNotification } from "./notification.controller.js";
 
 export const createJobAlert = asyncHandler(async (req, res) => {
     const { label, keyword, location, jobType } = req.body;
@@ -74,6 +75,14 @@ export const notifyMatchingAlerts = async (job) => {
                     <p><a href="${process.env.CLIENT_URL}/description/${job._id}">View the job</a></p>
                 `,
             }).catch(() => {});
+
+            createNotification({
+                user: alert.user._id,
+                type: "job_alert",
+                title: `New match: ${job.title}`,
+                message: `Matches your alert "${alert.label}" — ${job.location} · ${job.jobType}`,
+                link: `/description/${job._id}`,
+            });
         }
     } catch (error) {
         console.error("notifyMatchingAlerts failed:", error);

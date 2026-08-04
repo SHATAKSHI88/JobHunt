@@ -6,6 +6,7 @@ import ApiError from "../utils/ApiError.js";
 import sendEmail from "../utils/sendEmail.js";
 import { extractTextFromUrl } from "../utils/pdfText.js";
 import { scoreResumeMatch, generateDetailedAnalysis } from "../utils/geminiMatch.js";
+import { createNotification } from "./notification.controller.js";
 
 const SHORTLIST_THRESHOLD = Number(process.env.SHORTLIST_THRESHOLD) || 70;
 const GENDER_OPTIONS = ["male", "female", "prefer_not_to_say"];
@@ -192,6 +193,14 @@ export const updateStatus = asyncHandler(async (req, res) => {
         html: `<p>Hi ${application.applicant?.fullname || ""},</p>
                <p>Your application for <strong>${application.job.title}</strong> at ${application.job.company?.name || "the company"} has been <strong>${application.status}</strong>.</p>`,
     }).catch(() => {});
+
+    createNotification({
+        user: application.applicant?._id,
+        type: "application_status",
+        title: `Application ${application.status}`,
+        message: `Your application for ${application.job.title} at ${application.job.company?.name || "the company"} was ${application.status}.`,
+        link: `/description/${application.job._id}`,
+    });
 
     return res.status(200).json({
         message: "Status updated successfully.",

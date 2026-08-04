@@ -13,6 +13,7 @@ import ThemeToggle from './ThemeToggle'
 import CommandPalette from './CommandPalette'
 import RouteProgressBar from './RouteProgressBar'
 import CompareBar from './CompareBar'
+import NotificationBell from './NotificationBell'
 
 const navLinkClass = ({ isActive }) =>
     `relative py-1 transition-colors hover:text-foreground ${
@@ -95,6 +96,7 @@ const Navbar = () => {
                     </Button>
 
                     <ThemeToggle />
+                    <NotificationBell />
 
                     {
                         !user ? (
@@ -156,6 +158,7 @@ const Navbar = () => {
                 {/* Mobile controls: theme toggle always visible, rest behind hamburger */}
                 <div className='flex items-center gap-2 md:hidden'>
                     <ThemeToggle />
+                    <NotificationBell />
                     <Button
                         variant="outline"
                         size="icon"
