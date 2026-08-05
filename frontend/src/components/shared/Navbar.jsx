@@ -14,6 +14,7 @@ import CommandPalette from './CommandPalette'
 import RouteProgressBar from './RouteProgressBar'
 import CompareBar from './CompareBar'
 import NotificationBell from './NotificationBell'
+import VerifyBanner from './VerifyBanner'
 
 const navLinkClass = ({ isActive }) =>
     `relative py-1 transition-colors hover:text-foreground ${
@@ -61,6 +62,8 @@ const Navbar = () => {
     }
 
     return (
+        <>
+        <VerifyBanner />
         <header className='sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80'>
             <RouteProgressBar />
             <div className='flex items-center justify-between mx-auto max-w-7xl h-16 px-4'>
@@ -241,6 +244,7 @@ const Navbar = () => {
             <CommandPalette />
             <CompareBar />
         </header>
+        </>
     )
 }
 
