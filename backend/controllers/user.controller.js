@@ -42,6 +42,9 @@ export const register = asyncHandler(async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const hashedVerificationToken = crypto.createHash("sha256").update(verificationToken).digest("hex");
+
     await User.create({
         fullname,
         email,
@@ -51,10 +54,25 @@ export const register = asyncHandler(async (req, res) => {
         profile: {
             profilePhoto,
         },
+        verificationToken: hashedVerificationToken,
+        verificationTokenExpire: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
     });
 
+    const verifyUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
+    // Best-effort — a slow/broken email provider should never block signup.
+    sendEmail({
+        to: email,
+        subject: "Verify your JobHunt email",
+        html: `
+            <p>Hi ${fullname},</p>
+            <p>Welcome to JobHunt! Please verify your email address to get the most out of your account.</p>
+            <p><a href="${verifyUrl}">${verifyUrl}</a></p>
+            <p>This link expires in 24 hours.</p>
+        `,
+    }).catch(() => {});
+
     return res.status(201).json({
-        message: "Account created successfully.",
+        message: "Account created successfully. Check your email to verify your account.",
         success: true,
     });
 });
@@ -95,6 +113,7 @@ export const login = asyncHandler(async (req, res) => {
         profile: user.profile,
         savedJobs: user.savedJobs,
         createdAt: user.createdAt,
+        isVerified: user.isVerified,
     };
 
     return res
@@ -153,6 +172,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
         profile: user.profile,
         savedJobs: user.savedJobs,
         createdAt: user.createdAt,
+        isVerified: user.isVerified,
     };
 
     return res.status(200).json({
@@ -287,6 +307,71 @@ export const getSavedJobs = asyncHandler(async (req, res) => {
 
     return res.status(200).json({
         savedJobs: user.savedJobs,
+        success: true,
+    });
+});
+
+// --- Email verification ---
+
+export const verifyEmail = asyncHandler(async (req, res) => {
+    const { token } = req.params;
+
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+        verificationToken: hashedToken,
+        verificationTokenExpire: { $gt: Date.now() },
+    }).select("+verificationToken +verificationTokenExpire");
+
+    if (!user) {
+        throw new ApiError(400, "This verification link is invalid or has expired.");
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpire = undefined;
+    await user.save();
+
+    return res.status(200).json({
+        message: "Email verified successfully.",
+        success: true,
+    });
+});
+
+export const resendVerification = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.id);
+    if (!user) {
+        throw new ApiError(404, "User not found.");
+    }
+    if (user.isVerified) {
+        return res.status(200).json({
+            message: "Your email is already verified.",
+            success: true,
+        });
+    }
+
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    user.verificationToken = crypto.createHash("sha256").update(verificationToken).digest("hex");
+    user.verificationTokenExpire = Date.now() + 24 * 60 * 60 * 1000;
+    await user.save({ validateBeforeSave: false });
+
+    const verifyUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
+    const sent = await sendEmail({
+        to: user.email,
+        subject: "Verify your JobHunt email",
+        html: `
+            <p>Hi ${user.fullname},</p>
+            <p>Here's your new verification link. It expires in 24 hours.</p>
+            <p><a href="${verifyUrl}">${verifyUrl}</a></p>
+        `,
+    });
+
+    if (!sent) {
+        throw new ApiError(500, "Could not send verification email. Please try again later.");
+    }
+
+    return res.status(200).json({
+        message: "Verification email sent.",
         success: true,
     });
 });

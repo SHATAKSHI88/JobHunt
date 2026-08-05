@@ -151,6 +151,7 @@ const seed = async () => {
                 phoneNumber: "9999999999",
                 password: hashedPassword,
                 role: "recruiter",
+                isVerified: true,
             });
             console.log("✔ Created demo recruiter (recruiter@jobhunt.dev / password123)");
         } else {
@@ -167,6 +168,7 @@ const seed = async () => {
                 phoneNumber: "8888888888",
                 password: hashedPassword,
                 role: "student",
+                isVerified: true,
                 profile: { bio: "Aspiring developer exploring frontend roles.", skills: ["React", "JavaScript"] },
             });
             console.log("✔ Created demo student (student@jobhunt.dev / password123)");
