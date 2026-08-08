@@ -7,13 +7,15 @@ import { APPLICATION_API_END_POINT } from '@/utils/constant';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAllApplicants } from '@/redux/applicationSlice';
-import { LayoutGrid, List, Download } from 'lucide-react';
+import { LayoutGrid, List, Download, ArrowLeft } from 'lucide-react';
 import { downloadCSV } from '@/lib/csvExport';
 import { Button } from '../ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const Applicants = () => {
     const params = useParams();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { applicants } = useSelector(store => store.application);
     const [view, setView] = useState('board'); // 'board' | 'table'
 
@@ -48,6 +50,14 @@ const Applicants = () => {
             <div className='max-w-6xl mx-auto px-4 my-8'>
                 <div className='flex items-start justify-between flex-wrap gap-3 mb-6'>
                     <div>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => navigate('/admin/jobs')}
+                            className="mb-2 -ml-2 text-muted-foreground hover:text-foreground"
+                        >
+                            <ArrowLeft className='h-3.5 w-3.5 mr-1.5' /> Back to jobs
+                        </Button>
                         <h1 className='font-heading font-extrabold text-2xl'>Applicants</h1>
                         <p className='text-muted-foreground text-sm mt-1'>{applicants?.applications?.length ?? 0} people have applied for {applicants?.title || "this role"}.</p>
                     </div>
