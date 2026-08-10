@@ -4,7 +4,7 @@ import PageTransition from './shared/PageTransition'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
-import { MapPin, Briefcase, Wallet, GraduationCap, Users, CalendarDays, CheckCircle2, Bookmark, BookmarkCheck } from 'lucide-react'
+import { MapPin, Briefcase, Wallet, GraduationCap, Users, CalendarDays, CheckCircle2, Bookmark, BookmarkCheck, ArrowLeft } from 'lucide-react'
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { JOB_API_END_POINT } from '@/utils/constant';
@@ -86,6 +86,14 @@ const JobDescription = () => {
             <Navbar />
             <PageTransition>
             <div className='max-w-5xl mx-auto px-4 my-10 pb-24 sm:pb-10'>
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigate(-1)}
+                    className="mb-4 -ml-2 text-muted-foreground hover:text-foreground"
+                >
+                    <ArrowLeft className='h-3.5 w-3.5 mr-1.5' /> Back
+                </Button>
                 <div className='bg-card border border-border rounded-lg p-6 sm:p-8'>
                     <div className='flex flex-col sm:flex-row sm:items-start justify-between gap-4'>
                         <div className='flex items-start gap-4'>

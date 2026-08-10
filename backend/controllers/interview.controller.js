@@ -5,6 +5,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import sendEmail from "../utils/sendEmail.js";
 import { createDailyRoom, createMeetingToken, deleteDailyRoom } from "../utils/dailyApi.js";
+import { createNotification } from "./notification.controller.js";
 
 const ROOM_BUFFER_SECONDS = 60 * 60; // keep the room alive 1hr past the scheduled end, in case it runs long
 const TOKEN_LIFETIME_SECONDS = 60 * 30; // join tokens are short-lived; minted fresh each time someone hits "Join"
@@ -67,6 +68,14 @@ export const scheduleInterview = asyncHandler(async (req, res) => {
                <p>Log in to JobHunt and go to "My Applications" to join the video call at the scheduled time.</p>`,
     }).catch(() => {});
 
+    createNotification({
+        user: application.applicant?._id,
+        type: "interview",
+        title: `Interview scheduled: ${application.job.title}`,
+        message: `${application.job.company?.name || "The company"} scheduled your interview for ${scheduledDate.toLocaleString()}.`,
+        link: `/profile`,
+    });
+
     return res.status(201).json({
         message: "Interview scheduled successfully.",
         interview,
@@ -106,6 +115,14 @@ export const rescheduleInterview = asyncHandler(async (req, res) => {
                <p>Your interview for <strong>${interview.job.title}</strong> has been rescheduled to <strong>${scheduledDate.toLocaleString()}</strong>.</p>`,
     }).catch(() => {});
 
+    createNotification({
+        user: interview.candidate?._id,
+        type: "interview",
+        title: `Interview rescheduled: ${interview.job.title}`,
+        message: `Your interview is now set for ${scheduledDate.toLocaleString()}.`,
+        link: `/profile`,
+    });
+
     return res.status(200).json({
         message: "Interview rescheduled successfully.",
         interview,
@@ -135,6 +152,14 @@ export const cancelInterview = asyncHandler(async (req, res) => {
         html: `<p>Hi ${interview.candidate?.fullname || ""},</p>
                <p>Your interview for <strong>${interview.job.title}</strong> scheduled on ${interview.scheduledAt.toLocaleString()} has been cancelled. The recruiter may reach out to reschedule.</p>`,
     }).catch(() => {});
+
+    createNotification({
+        user: interview.candidate?._id,
+        type: "interview",
+        title: `Interview cancelled: ${interview.job.title}`,
+        message: `Your interview scheduled for ${interview.scheduledAt.toLocaleString()} was cancelled.`,
+        link: `/profile`,
+    });
 
     return res.status(200).json({
         message: "Interview cancelled.",

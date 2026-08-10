@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Button } from '../ui/button'
-import { Bell, CheckCheck, Briefcase, BellRing } from 'lucide-react'
+import { Bell, CheckCheck, Briefcase, BellRing, Video } from 'lucide-react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -21,6 +21,7 @@ const timeAgo = (iso) => {
 const typeIcon = {
     application_status: CheckCheck,
     job_alert: Briefcase,
+    interview: Video,
 }
 
 const NotificationBell = () => {
