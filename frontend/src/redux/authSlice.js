@@ -15,6 +15,9 @@ const authSlice = createSlice({
         setUser:(state, action) => {
             state.user = action.payload;
         },
+        setToken:(state, action) => {
+            state.token = action.payload;
+        },
         // keeps the navbar/job-card bookmark state in sync immediately,
         // without needing to refetch the whole user after every toggle
         setSavedJobIds:(state, action) => {
@@ -24,5 +27,5 @@ const authSlice = createSlice({
         }
     }
 });
-export const {setLoading, setUser, setSavedJobIds} = authSlice.actions;
+export const {setLoading, setUser, setToken, setSavedJobIds} = authSlice.actions;
 export default authSlice.reducer;
