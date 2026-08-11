@@ -132,6 +132,7 @@ export const login = asyncHandler(async (req, res) => {
         .json({
             message: `Welcome back ${user.fullname}`,
             user,
+            token,
             success: true,
         });
 });

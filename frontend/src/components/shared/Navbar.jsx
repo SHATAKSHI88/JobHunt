@@ -7,7 +7,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { USER_API_END_POINT } from '@/utils/constant'
-import { setUser } from '@/redux/authSlice'
+import { setUser, setToken } from '@/redux/authSlice'
 import { toast } from 'sonner'
 import ThemeToggle from './ThemeToggle'
 import CommandPalette from './CommandPalette'
@@ -50,6 +50,7 @@ const Navbar = () => {
             const res = await axios.get(`${USER_API_END_POINT}/logout`, { withCredentials: true });
             if (res.data.success) {
                 dispatch(setUser(null));
+                dispatch(setToken(null));
                 navigate("/");
                 toast.success(res.data.message);
             }

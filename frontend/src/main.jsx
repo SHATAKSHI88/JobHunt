@@ -8,6 +8,7 @@ import store from './redux/store.js'
 import { persistStore } from 'redux-persist'
 import { PersistGate } from 'redux-persist/integration/react'
 import { ThemeProvider } from './context/ThemeProvider.jsx'
+import './utils/axiosConfig.js'
 
 const persistor = persistStore(store);
 

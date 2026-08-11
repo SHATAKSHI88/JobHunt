@@ -10,7 +10,7 @@ import axios from 'axios'
 import { USER_API_END_POINT } from '@/utils/constant'
 import { toast } from 'sonner'
 import { useDispatch, useSelector } from 'react-redux'
-import { setLoading, setUser } from '@/redux/authSlice'
+import { setLoading, setUser, setToken } from '@/redux/authSlice'
 import { Loader2, Briefcase, CheckCircle2, X } from 'lucide-react'
 
 const highlights = [
@@ -43,6 +43,7 @@ const Login = () => {
             });
             if (res.data.success) {
                 dispatch(setUser(res.data.user));
+                dispatch(setToken(res.data.token));
                 navigate("/");
                 toast.success(res.data.message);
             }
