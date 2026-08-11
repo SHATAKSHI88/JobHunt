@@ -121,7 +121,13 @@ export const login = asyncHandler(async (req, res) => {
         .cookie("token", token, {
             maxAge: 1 * 24 * 60 * 60 * 1000,
             httpOnly: true,
-            sameSite: "none",
+            // sameSite: "none" is required since frontend (Vercel) and backend
+            // (Render) are different domains — but "none" is only honored by
+            // browsers when paired with secure: true (HTTPS-only cookie).
+            // Missing secure: true here was the actual bug — the cookie was
+            // silently dropped on every login.
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         })
         .json({
             message: `Welcome back ${user.fullname}`,
@@ -131,10 +137,12 @@ export const login = asyncHandler(async (req, res) => {
 });
 
 export const logout = asyncHandler(async (req, res) => {
-    return res.status(200).cookie("token", "", { maxAge: 0,
-    httpOnly: true,
-    secure: true,
-    sameSite: "none", }).json({
+    return res.status(200).cookie("token", "", {
+        maxAge: 0,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    }).json({
         message: "Logged out successfully.",
         success: true,
     });
