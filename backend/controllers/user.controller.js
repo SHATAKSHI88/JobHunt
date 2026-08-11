@@ -121,7 +121,7 @@ export const login = asyncHandler(async (req, res) => {
         .cookie("token", token, {
             maxAge: 1 * 24 * 60 * 60 * 1000,
             httpOnly: true,
-            sameSite: "strict",
+            sameSite: "none",
         })
         .json({
             message: `Welcome back ${user.fullname}`,
@@ -131,7 +131,10 @@ export const login = asyncHandler(async (req, res) => {
 });
 
 export const logout = asyncHandler(async (req, res) => {
-    return res.status(200).cookie("token", "", { maxAge: 0 }).json({
+    return res.status(200).cookie("token", "", { maxAge: 0,
+    httpOnly: true,
+    secure: true,
+    sameSite: "none", }).json({
         message: "Logged out successfully.",
         success: true,
     });
